@@ -61,11 +61,26 @@ for sys in systems:
             lines = top_file.readlines()
             unchanged_lines = lines[:9]
         with open(tessilation_top, 'w') as top_file:
-            leaflet = int(DOPC_count/2)
-            top_file.writelines(unchanged_lines)
-            top_file.write(f"DOPC {leaflet}\n")
-            top_file.write(f"DOPC {leaflet}\n")
-            top_file.write(f"W {W}\n")
-            top_file.write(f"NA {NA}\n")
-            top_file.write(f"CL {CL}\n")
+            leaflet_lipid = int(DOPC_count/2)
+            leaflet_water = int(W/2)
+            leaflet_na = int(NA/2)
+            leaflet_cl = int(CL/2)
+            if size == 'xsmall':
+                top_file.writelines(unchanged_lines)
+                top_file.write(f"DOPC {leaflet_lipid}\n")
+                top_file.write(f"DOPC {leaflet_lipid}\n")
+                top_file.write(f"W {W}\n")
+                top_file.write(f"NA {NA}\n")
+                top_file.write(f"CL {CL}\n")
+            
+            else: 
+                top_file.writelines(unchanged_lines)
+                top_file.write(f"DOPC {leaflet_lipid}\n")
+                top_file.write(f"W {leaflet_water}\n")
+                top_file.write(f"NA {leaflet_na}\n")
+                top_file.write(f"CL {leaflet_cl}\n")
+                top_file.write(f"DOPC {leaflet_lipid}\n")
+                top_file.write(f"W {leaflet_water}\n")
+                top_file.write(f"NA {leaflet_na}\n")
+                top_file.write(f"CL {leaflet_cl}\n")
             print({DOPC_count, W, NA, CL})  
