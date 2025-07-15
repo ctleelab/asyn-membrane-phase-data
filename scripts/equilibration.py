@@ -14,7 +14,7 @@ script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent /"mdps") 
 
 
-systems = [1,2]
+systems = [1]
 
 for sys in systems:
     system_folder = f"system{sys}"
@@ -24,7 +24,7 @@ for sys in systems:
     equilibration_folder = system_path / f"equil"
     equilibration_folder.mkdir(exist_ok = True)
     equilibration_path = system_path / equilibration_folder
-    equilibration_number = 6.2
+    equilibration_number = 6.7
     gro = system_path/ f"minimization6.1.gro"
 
     while equilibration_number <= 6.7:
@@ -39,7 +39,7 @@ for sys in systems:
             subprocess.run(equil_tpr, shell = True, check = True)
 
             #run equilibration
-            equil_mdrun = f" gmx mdrun -nt 64 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
+            equil_mdrun = f" gmx mdrun -nt 4 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
             subprocess.run(equil_mdrun, shell = True, check = True)
 
             #input the equilibration gro file as new gro
@@ -60,7 +60,7 @@ for sys in systems:
             subprocess.run(equil_tpr, shell = True, check = True)
 
             #run equilibration
-            equil_mdrun = f" gmx mdrun -nt 64 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
+            equil_mdrun = f" gmx mdrun -nt 4 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
             subprocess.run(equil_mdrun, shell = True, check = True)
 
             #update gro file 
@@ -68,7 +68,7 @@ for sys in systems:
 
             equilibration_number = round(equilibration_number + 0.1,1) 
 
-"""         if equilibration_number == 6.7: 
+        if equilibration_number == 6.7: 
             #re-define files 
             equil_mdp = mdp_path / f"step{equilibration_number}_equilibration.mdp"
             tpr_file = equilibration_path / f"equilibration{equilibration_number}.tpr"
@@ -81,13 +81,13 @@ for sys in systems:
             subprocess.run(equil_tpr, shell = True, check = True)
 
             #run equilibration
-            equil_mdrun = f" gmx mdrun -nt 64 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
+            equil_mdrun = f" gmx mdrun -nt 8 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
             subprocess.run(equil_mdrun, shell = True, check = True)
 
             #update gro file 
             gro = equilibration_path/ f"equilibration{equilibration_number}"
 
-            equilibration_number = round(equilibration_number + 0.1,1)  """
+            equilibration_number = round(equilibration_number + 0.1,1) 
             
     
         
