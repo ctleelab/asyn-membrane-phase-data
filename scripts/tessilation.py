@@ -4,7 +4,7 @@ from util import base_path
 import subprocess
 import shutil
 
-systems = [2]
+systems = [1]
 dimensions = {'xsmall': "1 1 1", 'small': "2 1 1"
 , 'medium': "3 1 1", 'large': "4 1 1"}
 
@@ -25,9 +25,9 @@ for sys in systems:
         else:
             print(f"{gro_file_output} already exists.")
 
-        #create copy of top file 
+        #create copy of top file  
         top_file = system_path / "system.top"
-        tessilation_top = tessilation_folder / f"system-{size}.top"
+        tessilation_top = tessilation_folder / f"{size}-system.top"
         if not tessilation_top.exists():
             shutil.copy(top_file, tessilation_top)
         else:
@@ -37,30 +37,35 @@ for sys in systems:
         with open(gro_file_output, 'r') as gro_file:
             lines = gro_file.readlines()[2:]
         #set all molecule count to 0 
-        DPPC_count = 0
+        DOPC_count = 0
         W = 0
         NA = 0
         CL = 0
+        unique_DOPC = set()
         #go through each line in the gro file and add to the counts of each molecule type
         for line in lines:
-            if "DPPC" in line:
-                DPPC_count += 1
+            #only want to add if unique DOPC 1DOPC different from 2DOPC
+            if "DOPC" in line:
+                token = line.strip().split()[0]
+                if token not in unique_DOPC:
+                    unique_DOPC.add(token)
             elif "W" in line:
                 W +=1
             elif "NA" in line:
                 NA +=1
             elif "CL" in line:
                 CL +=1
+        DOPC_count = len(unique_DOPC)
         #write the updated counts to the top file
         with open(tessilation_top, 'r') as top_file:
             lines = top_file.readlines()
             unchanged_lines = lines[:9]
         with open(tessilation_top, 'w') as top_file:
-            leaflet = int(DPPC_count/2)
+            leaflet = int(DOPC_count/2)
             top_file.writelines(unchanged_lines)
-            top_file.write(f"DPPC {leaflet}\n")
-            top_file.write(f"DPPC {leaflet}\n")
+            top_file.write(f"DOPC {leaflet}\n")
+            top_file.write(f"DOPC {leaflet}\n")
             top_file.write(f"W {W}\n")
             top_file.write(f"NA {NA}\n")
             top_file.write(f"CL {CL}\n")
-            print({DPPC_count, W, NA, CL})  
+            print({DOPC_count, W, NA, CL})  
