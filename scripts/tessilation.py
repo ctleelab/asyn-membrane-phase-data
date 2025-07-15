@@ -61,26 +61,47 @@ for sys in systems:
             lines = top_file.readlines()
             unchanged_lines = lines[:9]
         with open(tessilation_top, 'w') as top_file:
-            leaflet_lipid = int(DOPC_count/2)
-            leaflet_water = int(W/2)
-            leaflet_na = int(NA/2)
-            leaflet_cl = int(CL/2)
             if size == 'xsmall':
                 top_file.writelines(unchanged_lines)
-                top_file.write(f"DOPC {leaflet_lipid}\n")
-                top_file.write(f"DOPC {leaflet_lipid}\n")
+                top_file.write(f"DOPC {DOPC_count}\n")
                 top_file.write(f"W {W}\n")
                 top_file.write(f"NA {NA}\n")
                 top_file.write(f"CL {CL}\n")
-            
-            else: 
+
+            elif size == 'small':
+                tessilations = 2
+                seperated_lipid = int(DOPC_count/tessilations)
+                seperated_water = int(W/tessilations)
+                seperated_na = int(NA/tessilations)
+                seperated_cl = int(CL/tessilations)
                 top_file.writelines(unchanged_lines)
-                top_file.write(f"DOPC {leaflet_lipid}\n")
-                top_file.write(f"W {leaflet_water}\n")
-                top_file.write(f"NA {leaflet_na}\n")
-                top_file.write(f"CL {leaflet_cl}\n")
-                top_file.write(f"DOPC {leaflet_lipid}\n")
-                top_file.write(f"W {leaflet_water}\n")
-                top_file.write(f"NA {leaflet_na}\n")
-                top_file.write(f"CL {leaflet_cl}\n")
+                for i in range(tessilations):
+                    top_file.write(f"DOPC {seperated_lipid}\n")
+                    top_file.write(f"W {seperated_water}\n")
+                    top_file.write(f"NA {seperated_na}\n")
+                    top_file.write(f"CL {seperated_cl}\n")
+            elif size == 'medium':
+                tessilations = 3
+                seperated_lipid = int(DOPC_count/tessilations)
+                seperated_water = int(W/tessilations)
+                seperated_na = int(NA/tessilations)
+                seperated_cl = int(CL/tessilations)
+                top_file.writelines(unchanged_lines)
+                for i in range(tessilations):
+                    top_file.write(f"DOPC {seperated_lipid}\n")
+                    top_file.write(f"W {seperated_water}\n")
+                    top_file.write(f"NA {seperated_na}\n")
+                    top_file.write(f"CL {seperated_cl}\n")
+            elif size == 'large':
+                tessilations = 4
+                seperated_lipid = int(DOPC_count/tessilations)
+                seperated_water = int(W/tessilations)
+                seperated_na = int(NA/tessilations)
+                seperated_cl = int(CL/tessilations)
+                top_file.writelines(unchanged_lines)
+                for i in range(tessilations):
+                    top_file.write(f"DOPC {seperated_lipid}\n")
+                    top_file.write(f"W {seperated_water}\n")
+                    top_file.write(f"NA {seperated_na}\n")
+                    top_file.write(f"CL {seperated_cl}\n")
             print({DOPC_count, W, NA, CL})  
