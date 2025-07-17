@@ -29,8 +29,8 @@ ref_t                    = 285
 Pcoupl                   = berendsen
 Pcoupltype               = anisotropic
 tau_p                    = 12
-compressibility          = 3e-4 0 0 0 0 0 ; xx yy zz xy xz yz 
-ref_p                    = 1.0 1.0 1.0 0 0 0 
+compressibility          = 3e-4 0 3e-4  0 0 0 ; xx yy zz xy xz yz ;volume can change in xx and zz dimension
+ref_p                    = 200.0 1.0 1.0 0 0 0 
 
 ; GENERATE VELOCITIES FOR STARTUP RUN:
 gen_vel                  = no
