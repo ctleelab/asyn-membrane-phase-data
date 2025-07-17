@@ -7,7 +7,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import numpy as np
 
-systems = [2]
+systems = [1,2]
 lipid_number = 128
 
 for sys in systems:
