@@ -1,3 +1,8 @@
+################
+##GENERAL INFO##
+################
+#size of system can be changed, must change folder name and insane_run 
+
 #load in the systems 
 import util as util
 from util import base_path
@@ -29,7 +34,7 @@ for sims, compositions in util.system_compositions.items():
        continue 
     
     #create a folder for each system in the systems folder
-    folder_name = f"system{sims}"
+    folder_name = f"system{sims}-10x10x20"
     #coverts the folder name which is a string to a Path object 
     folder_path = base_path/folder_name
     #creates the folder 
@@ -49,8 +54,8 @@ for sims, compositions in util.system_compositions.items():
     #this naming need to match the CS_minimization.sh script
     neutral_gro = folder_path / f"neutral.gro"
 
-    #run insane function for large box 
-    insane_run = f"insane -x 6 -y 6 -z 6 -sol W -o {output_gro} -l {compositions_str} -p {output_top}"
+    #run insane function 
+    insane_run = f"insane -x 10 -y 10 -z 20 -sol W -o {output_gro} -l {compositions_str} -p {output_top}"
 
     #subprocess running, meaning takes the insane_run string and runs it as a bash command
     subprocess.run(insane_run ,shell = True, check = True )

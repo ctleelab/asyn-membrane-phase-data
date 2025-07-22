@@ -1,3 +1,8 @@
+################
+##GENERAL INFO##
+################
+#can only run this script for either system 1 or 2. Cannot do at the same time as it counts either DOPC or DPPC 
+
 #importing libraries 
 import util as util
 from util import base_path 
@@ -5,13 +10,14 @@ import subprocess
 import shutil
 
 systems = [1]
-dimensions = {'xsmall': "1 1 1", 'small': "2 1 1"
-, 'medium': "3 1 1", 'large': "4 1 1"}
+dimensions = {'xsmall': "1 1 1", 'small': "2 1 1", 'medium': "3 1 1", 'large': "4 1 1"}
+#dimensions = {'xsmall': "1 1 1", 'small': "2 1 1", 'medium': "3 1 1"}
+#dimensions = {'xlarge': "10 1 1"}
 
 
 #replicating system 
 for sys in systems:
-    system_folder = f"system{sys}"
+    system_folder = f"system{sys}-10x10x20"
     system_path = base_path/system_folder
     tessilation_folder = system_path / "tessilation"
     tessilation_folder.mkdir(exist_ok =True)
@@ -104,4 +110,29 @@ for sys in systems:
                     top_file.write(f"W {seperated_water}\n")
                     top_file.write(f"NA {seperated_na}\n")
                     top_file.write(f"CL {seperated_cl}\n")
+            elif size == 'xlarge-z' :
+                tessilations = 50
+                seperated_lipid = int(DOPC_count/tessilations)
+                seperated_water = int(W/tessilations)
+                seperated_na = int(NA/tessilations)
+                seperated_cl = int(CL/tessilations)
+                top_file.writelines(unchanged_lines)
+                for i in range(tessilations):
+                    top_file.write(f"DOPC {seperated_lipid}\n")
+                    top_file.write(f"W {seperated_water}\n")
+                    top_file.write(f"NA {seperated_na}\n")
+                    top_file.write(f"CL {seperated_cl}\n")
+            elif size == 'xlarge' :
+                tessilations = 10
+                seperated_lipid = int(DOPC_count/tessilations)
+                seperated_water = int(W/tessilations)
+                seperated_na = int(NA/tessilations)
+                seperated_cl = int(CL/tessilations)
+                top_file.writelines(unchanged_lines)
+                for i in range(tessilations):
+                    top_file.write(f"DOPC {seperated_lipid}\n")
+                    top_file.write(f"W {seperated_water}\n")
+                    top_file.write(f"NA {seperated_na}\n")
+                    top_file.write(f"CL {seperated_cl}\n")
+                    
             print({DOPC_count, W, NA, CL})  

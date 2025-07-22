@@ -19,7 +19,7 @@ for sys in systems:
     # Reset the minimization number, needs to start at 6.0 for each system
     minimization_number = 6.0 
     # Define system folder and path    
-    system_folder = f"system{sys}"
+    system_folder = f"system{sys}-10x10x20"
     system_path = base_path / system_folder
     
     # Define files 
