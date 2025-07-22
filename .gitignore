@@ -6,7 +6,6 @@ mdout.mdp
 martini3-files/
 analysis/
 analysis/
-martini3-files/
 *.xtc
 *.trr
 *.edr
@@ -18,4 +17,3 @@ martini3-files/
 *.png
 *.log
 *.pdf
-
