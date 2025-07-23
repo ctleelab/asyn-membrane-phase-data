@@ -6,6 +6,7 @@ import subprocess
 
 import matplotlib.pyplot as plt
 import numpy as np
+import MDAnalysis as mda
 
 systems = [1,2]
 lipid_number = 128
@@ -19,24 +20,19 @@ for sys in systems:
     edr = equilibration_path / "equilibration6.6.edr"
     analysis_folder= system_path / f"analysis"
     analysis_folder.mkdir(exist_ok=True)
-    box_size = analysis_folder / "box-size_50ns.xvg"
 
+    aux = mda.auxiliary.EDR.EDRReader(edr)
+    box_x = aux.get_data("Box-X")
+    box_y = aux.get_data("Box-Y")
+    time = box_x["Time"]
 
-    #reading edr file, to get the size of the box over time
-    read_edr = f"gmx energy -f {edr} -o {box_size}"
-    subprocess.run(read_edr, shell = True, check = True, input = "12\n13\n\n", text = True)
-
-    xy = np.loadtxt(analysis_folder/ f"box-size_50ns.xvg", comments = ('#', '@'))
-    step = xy[:, 0]
-    x_length = xy[:, 1]
-    y_length = xy[:, 2]
-    #calcualte the area per lipid for each step
-    ApL = (x_length * y_length) / lipid_number
+    #calculate the area per lipid for each step
+    ApL = (np.array(box_x["Box-X"]) * np.array(box_y["Box-Y"])) / lipid_number
+    
     #join the ApL to the original data
-    np.savetxt(analysis_folder/ f'area.xvg', np.column_stack((step, ApL)))
 
     #create a plot
-    plt.plot(step, ApL)
+    plt.plot(time, ApL)
     plt.xlabel('Step')
     plt.ylabel('Area per lipid (nm^2)')
     plt.title(f"Area per lipid for system{sys}")
