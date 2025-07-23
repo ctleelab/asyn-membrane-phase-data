@@ -1,0 +1,38 @@
+;no force imposed on lipid bilayer
+integrator               = md
+tinit                    = 0.0
+dt                       = 0.020
+nsteps                   = 2500000 
+nstlog                   = 1000 
+nstenergy                = 1000
+nstxout-compressed       = 1000
+compressed-x-precision   = 100
+
+cutoff-scheme            = Verlet
+nstlist                  = 20
+pbc                      = xyz
+verlet-buffer-tolerance  = 0.005
+
+epsilon_r                = 15
+coulombtype              = reaction-field
+rcoulomb                 = 1.1
+vdw_type                 = cutoff
+vdw-modifier             = Potential-shift-verlet
+rvdw                     = 1.1
+
+tcoupl                   = v-rescale
+tc-grps                  = system
+tau_t                    = 1.0
+ref_t                    = 285
+
+; Pressure coupling:
+Pcoupl                   = berendsen
+Pcoupltype               = anisotropic
+tau_p                    = 12
+compressibility          = 3e-4 0 3e-4  0 0 0 ; xx yy zz xy xz yz ;volume can change in xx and zz dimension
+ref_p                    = 200.0 1.0 1.0 0 0 0 
+
+; GENERATE VELOCITIES FOR STARTUP RUN:
+gen_vel                  = no
+
+refcoord_scaling         = all

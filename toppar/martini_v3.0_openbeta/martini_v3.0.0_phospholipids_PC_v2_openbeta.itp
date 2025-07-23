@@ -384,7 +384,12 @@
    9 10 11 	a_C1_C1_C1_def
   10 11 12 	a_C1_C1_C1_def
 
-
+#ifdef BILAYER_LIPIDHEAD_FC
+    [ position_restraints ]
+    ;to fix Z postion of head grop in bilayer simulation
+    ; atom   func     x        y         z 
+      1       1      0.0      0.0     BILAYER_LIPIDHEAD_FC
+#endif
 
 ;;;;;; Martini lipid topology for di-C18:0 PC (DSPC), generated using:
 ; The Martini lipid itp generator version M3.l01  Args are: -alname DSPC -alhead 'C P' -allink 'G G' -altail 'CCCC CCCC'
@@ -1070,7 +1075,12 @@
    9 10 11 	a_C1_C4_C1_def          
   10 11 12 	a_C4_C1_C1_def          
 
-
+#ifdef BILAYER_LIPIDHEAD_FC
+    [ position_restraints ]
+    ;to fix Z postion of head grop in bilayer simulation
+    ; atom   func     x        y         z 
+      1       1      0.0      0.0     BILAYER_LIPIDHEAD_FC
+#endif
 
 ;;;;;; Martini lipid topology for di-C18:1 PC (DVPC), generated using:
 ; The Martini lipid itp generator version M3.l01  Args are: -alname DVPC -alhead 'C P' -allink 'G G' -altail 'CCDC CCDC'
