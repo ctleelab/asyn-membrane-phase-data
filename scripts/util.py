@@ -26,5 +26,7 @@ sim_path = Path("/scratch/casakurai/asyn-phase-binding-data/systems")
  
 mdp_path = ("/scratch/casakurai/asyn-phase-binding-data/systems/mdps")
 
+analysis_path = Path("/scratch/casakurai/asyn-phase-binding-data/analysis")
+
 membrane_sel = "resname DPPC DOPC"
 po4_sel = " name PO41 PO42 GLC "
