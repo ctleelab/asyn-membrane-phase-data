@@ -24,7 +24,7 @@ script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent /"mdps") 
 
 
-initial_dim = "6x6x12"
+initial_dim = "8x8x25"
 final_dims = ['large']
 
 #figures be created in current working directory, which should be scipts
@@ -38,30 +38,34 @@ def _strip_trajectory(job) -> None:
     sys, dim = job
     analysis = util.analysis_path
     analysis_curv_folder = f"local_curvature"
-    analysis_curv_dir = analysis/analysis_curv_folder 
+    system_folder = f"system{sys}-{initial_dim}"
+    analysis_curv_dir = analysis/analysis_curv_folder/system_folder
     analysis_curv_dir.mkdir(parents = True, exist_ok = True)
 
     os.chdir(analysis_curv_dir)
     system_folder = f"system{sys}-{initial_dim}"
     system_path = base_path/system_folder
 
-    if sys == 1:
-        pressure_folder = "100bar-xzPcoupled-compression"
-    else:
-        pressure_folder = "200bar-xzPcoupled-compression"
-    pressure_path = system_path/pressure_folder
+    pressure_folder = "xzPcoupled-50bar-compression"
+
+
+    # if sys == 1:
+    #     pressure_folder = "100bar-xzPcoupled-compression"
+    # else:
+    #     pressure_folder = "200bar-xzPcoupled-compression"
+    # pressure_path = system_path/pressure_folder
 
     for dim in final_dims:
         file_name = f"{dim}-compression"
 
         #create trajectory file with only PO4
-        trjconv_cmd = f"echo '2' | gmx trjconv -f {pressure_path}/{file_name}.gro -o {sys}-{dim}-po4_only.gro -n {sys}-{dim}-po4_membrane.ndx -s {sys}-{dim}-analysis.tpr"
+        trjconv_cmd = f"echo '1' | gmx trjconv -f {sys}-{dim}-trimmed.gro -o {sys}-{dim}-po4_only.gro -n {sys}-{dim}-po4_membrane.ndx -s {sys}-{dim}-analysis.tpr"
         subprocess.run(trjconv_cmd, shell=True, check=True)
 
 
         
         #center the trajectory which is important b/c membrane can move through the simulation box during the simulation
-        trjconv_cmd = f"echo '1 2' | gmx trjconv -f {pressure_path}/{file_name}.xtc -center -o {sys}-{dim}-po4_all.xtc -n {sys}-{dim}-po4_membrane.ndx -s {sys}-{dim}-analysis.tpr"
+        trjconv_cmd = f"echo '0 1' | gmx trjconv -f {sys}-{dim}-trimmed.xtc -center -o {sys}-{dim}-po4_all.xtc -n {sys}-{dim}-po4_membrane.ndx -s {sys}-{dim}-analysis.tpr"
         subprocess.run(trjconv_cmd, shell=True, check=True)
 
 
@@ -82,14 +86,17 @@ for sys in systems:
     analysis = util.analysis_path
     analysis.mkdir(parents=True, exist_ok=True)
     analysis_curv_folder = f"local_curvature"
-    analysis_curv_dir = analysis/analysis_curv_folder 
+    analysis_curv_dir = analysis/analysis_curv_folder/system_folder
     analysis_curv_dir.mkdir(parents = True, exist_ok = True)
 
     #takes into account the different pressure required to bend membrane if DOPC vs DPPC 
-    if sys == 1:
-        pressure_folder = "100bar-xzPcoupled-compression"
-    else:
-        pressure_folder = "200bar-xzPcoupled-compression"
+    # if sys == 1:
+    #     pressure_folder = "100bar-xzPcoupled-compression"
+    # else:
+    #     pressure_folder = "200bar-xzPcoupled-compression"
+    
+    pressure_folder = "xzPcoupled-50bar-compression"
+
     pressure_path = system_path/pressure_folder
     for dim in final_dims:
         file_name = f"{dim}-compression"
@@ -109,6 +116,11 @@ for sys in systems:
             ndx.write(all_atoms,name = "system")
             ndx.write(PO4, name = "po4")
             ndx.write(membrane, name = "membrane")
+
+
+        #I think I need to extract a certain frame from the trajectory file rather than just one .gro
+        interval_tpr = f"echo '0' | gmx trjconv -f {pressure_path}/{file_name}.xtc -s {pressure_path}/{file_name}.tpr -o {analysis_curv_dir}/{sys}-{dim}-trimmed.xtc -b {0} -e {10000} -dt {1}"
+        subprocess.run(interval_tpr, shell = True, check = True)
 
         #extract .gro from 10,000ps 
         interval_tpr = f"echo '0' | gmx trjconv -f {pressure_path}/{file_name}.xtc -s {pressure_path}/{file_name}.tpr -o {analysis_curv_dir}/{sys}-{dim}-trimmed.gro -dump {10000}"
