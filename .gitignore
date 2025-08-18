@@ -19,3 +19,4 @@ analysis/
 *.pdf
 .ipynb_checkpoints
 old_systems/
+scripts/old-scripts
