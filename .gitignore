@@ -17,3 +17,5 @@ analysis/
 *.png
 *.log
 *.pdf
+.ipynb_checkpoints
+old_systems/
