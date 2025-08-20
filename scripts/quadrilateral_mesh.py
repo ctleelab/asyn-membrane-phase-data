@@ -14,25 +14,26 @@ from util import analysis_path
 #divide the min dimension by the bin size to get the number of bins 
 #MembraneSpectralAnalysis 
 
-#size of bins (2nm)
+#size of bins (.5nm)
 step = 2
 
 path = analysis_path / "curvature_selection" / "mesh"
 
 def mesh(args):
-    gro, selection, traj, path = args
-    u = mda.Universe(gro, str(traj) , continous=True)
+    #gro, selection, traj, path = args
+    gro, selection, path = args
+    #u = mda.Universe(gro, str(traj) , continous=True)
+    u = mda.Universe(gro, continous=True)
 
     # Average box dimensions over trajectory
+    # might not need since I'm in the NVT ensemble
     avg_dim_x = np.mean([ts.dimensions[0] for ts in u.trajectory])
     avg_dim_y = np.mean([ts.dimensions[1] for ts in u.trajectory])
 
-    # Convert step to Å (MDAnalysis uses Å)
-    step_angstrom = step * 10.0  # step in nm
 
     # Determine number of bins
-    num_bins_x = int(avg_dim_x / step_angstrom)
-    num_bins_y = int(avg_dim_y / step_angstrom)
+    num_bins_x = int(avg_dim_x / step)
+    num_bins_y = int(avg_dim_y / step)
 
     # Create bin edges
     x_edges = np.linspace(0, avg_dim_x, num_bins_x + 1)
@@ -43,9 +44,9 @@ def mesh(args):
     y_centers = 0.5 * (y_edges[:-1] + y_edges[1:])
     X, Y = np.meshgrid(x_centers, y_centers, indexing="ij")
 
-    # Checking z-range of phosphates
-    ag = u.atoms.select_atoms("name PO4")
-    z_coords = ag.positions[:, 2]
+    # Checking z-range of lower glycerol bead
+    ag = u.atoms.select_atoms("name GL2")
+    z_coords = ag.positions[:, 2]            
     print("min z:", np.min(z_coords))
     print("max z:", np.max(z_coords))
     print("z spread:", np.ptp(z_coords))
@@ -62,11 +63,12 @@ def mesh(args):
         interpolate=True
     ).run(verbose=True)
 
-    # Save result
-    with open(path / "membrane_curvature_smooth.pickle", "wb") as handle:
-        pickle.dump(mc, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    z_data_upper = mc.results["z_surface"]["upper"]
+    z_data_lower = mc.results["z_surface"]["lower"] 
 
-    return X, Y, mc  # optionally return mesh and result for plotting
+    # Save only the results I care about. No need to save entire mc object
+    with open(path / "membrane_curvature_smooth.pickle", "wb") as handle:
+        pickle.dump({"X":X, "Y": Y, "Z_upper": z_data_upper ,"Z_lower": z_data_lower}, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 jobs = []
 systems = [2]
@@ -81,7 +83,8 @@ for sys in systems:
     traj = analysis_path / "curvature_selection"/"NVT"/f"system{sys}-8x8x25-{lipid}-{time}ps-NVT"/"equil"/"equilibration7.6.xtc"
     #selection
     selection = f"name PO4"
-    inputs = (gro, selection, traj, path)
+    #inputs = (gro, selection, traj, path)
+    inputs = (gro, selection, path)
     jobs.append(inputs)
 
 process_map(mesh, jobs, max_workers=64)

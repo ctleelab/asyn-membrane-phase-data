@@ -10,26 +10,15 @@ path = analysis_path / "curvature_selection" / "mesh"
 with open(path / "membrane_curvature_smooth.pickle", "rb") as handle:
     mc = pickle.load(handle)
 
-# Extract z surfaces
-z_data_upper = mc.results["z_surface"]["upper"]
-z_data_lower = mc.results["z_surface"]["lower"]
-
-# Compute bin edges from x_range, y_range, and number of bins
-x_edges = np.linspace(mc.x_range[0], mc.x_range[1], mc.n_x_bins + 1)
-y_edges = np.linspace(mc.y_range[0], mc.y_range[1], mc.n_y_bins + 1)
-
-# Compute bin centers
-x_centers = 0.5 * (x_edges[:-1] + x_edges[1:])
-y_centers = 0.5 * (y_edges[:-1] + y_edges[1:])
-X, Y = np.meshgrid(x_centers, y_centers, indexing="ij")
-
 frame = 0  # choose frame
-z_upper = z_data_upper[frame]
-z_lower = z_data_lower[frame]
-
-# # Optional: smooth the surfaces for better visualization
-# z_upper_smooth = gaussian_filter(z_upper, sigma=1)
-# z_lower_smooth = gaussian_filter(z_lower, sigma=1)
+z_upper = mc["Z_upper"][frame]
+z_lower = mc["Z_lower"][frame]
+X = mc["X"]
+Y = mc["Y"]
+print(X.shape, Y.shape, z_upper.shape, z_lower.shape)
+nx, ny = z_upper.shape
+print("Number of bins in X:", nx)
+print("Number of bins in Y:", ny)
 
 # Create Plotly figure
 fig = go.Figure()
