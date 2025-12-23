@@ -2,7 +2,7 @@
 authors = ["Christopher T. Lee <ctlee@ucsd.edu>"]
 channels = ["conda-forge"]
 name = "asyn-phase-binding-data"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
