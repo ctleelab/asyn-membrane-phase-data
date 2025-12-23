@@ -17,3 +17,6 @@ analysis/
 *.png
 *.log
 *.pdf
+# pixi environments
+.pixi/*
+!.pixi/config.toml

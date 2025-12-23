@@ -1,0 +1,18 @@
+[workspace]
+authors = ["Christopher T. Lee <ctlee@ucsd.edu>"]
+channels = ["conda-forge"]
+name = "asyn-phase-binding-data"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "*"
+tqdm = ">=4.67.1,<5"
+pandas = ">=2.3.3,<3"
+numpy = ">=2.3.5,<3"
+
+
+[pypi-dependencies]
+ctleelab_plothelper = { git = "https://github.com/ctleelab/ctleelab-mpl-utilities.git", branch = "development"}
