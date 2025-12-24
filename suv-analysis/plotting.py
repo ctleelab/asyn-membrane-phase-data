@@ -11,7 +11,8 @@ from matplotlib.colors import TwoSlopeNorm
 import pdb
 
 
-df = pd.read_csv("curvatures.csv")
+df = pd.read_csv("DPPC_DPPS_g3_Data_003.csv")
+lipid = "DPPC_DPPS"
 
 
 def plot_curve(df, i):
@@ -41,6 +42,7 @@ def plot_curve(df, i):
         c[c == np.inf] = 999999
     curvature_radius = c * 1000  # nm
 
+
     cdf = pd.DataFrame(
         {"theta": theta, "curvature": curvature, "curvature_radius": curvature_radius}
     )
@@ -54,7 +56,8 @@ def plot_curve(df, i):
         ax.set_xlabel("Theta ($\circ$)")
         ax.xaxis.set_major_locator(MultipleLocator(60))
         ax.set_ylabel("Curvature (μm$^{-1}$)")
-        fig.savefig(f"curve_{i}.png")
+        ax.set_title(f"{lipid} curve{i}")
+        fig.savefig(f"{lipid}_curve_{i}.png")
 
         fig, ax = ph.fixed_size_subplots(1, 1, subwidth=3, subheight=1.5)
 
@@ -64,26 +67,33 @@ def plot_curve(df, i):
         ax.xaxis.set_major_locator(MultipleLocator(60))
         ax.set_ylabel("Radius of Curvature (nm)")
         ax.set_ylim(0, 1000)
+        ax.set_title(f"{lipid} curve{i}")
 
-        fig.savefig(f"curve_{i}_radius.png")
+        fig.savefig(f"{lipid}_curve_{i}_radius.png")
 
         # Geometry plot: map curvature to colorbar on (x, y)
         fig, ax = ph.fixed_size_subplots(1, 1, subwidth=1.5, subheight=1.5,   rmargin_scale = 2)
 
+        print("curve", {i})
+        print(np.nanmax(curvature))
         norm = TwoSlopeNorm(
-            vmin=np.nanmin(curvature), vcenter=0.0, vmax=np.nanmax(curvature)
+            vmin=-650, vcenter=0.0, vmax=650
         )
 
         sc = ax.scatter(x, y, c=curvature, cmap=cm.coolwarm, s=10, norm=norm)
 
         cbar = ph.add_fixed_colorbar(sc, ax=ax, aspect=20, pad=0.05)
         cbar.set_label("Curvature (μm$^{-1}$)")
+        cbar.locator = MultipleLocator(200)
+        cbar.update_ticks() 
+
 
         ax.set_xlabel("X (μm)")
         ax.set_ylabel("Y (μm)")
+        ax.set_title(f"{lipid} curve{i}")
         ax.set_aspect("equal", adjustable="datalim")
-        fig.savefig(f"geom_{i}.png")
+        fig.savefig(f"{lipid}_geom_curve_{i}.png")
 
 
-for i in range(1, 5):
+for i in range(1,6):
     plot_curve(df, i)
