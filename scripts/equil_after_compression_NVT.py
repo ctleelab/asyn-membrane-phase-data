@@ -7,22 +7,12 @@ import subprocess
 import MDAnalysis as mda
 
 #inputs
-sys = 5
-
-#use if you are looking directly at the vmd simulation 
-# vmd_frame = 50
-# frame =  int(vmd_frame*1000*.02)
-
-##use if you're pulling from a particular time (ps)
- 
-frame =  int(116000)
-initial_dim = "8x8x25"
-final_dim = "large"
-compression = "35bar"
-lipid = "DPPC-DPPA"
-sim_time = 1000
+final_dim = "8x8x25"
+strain = "0.15strain"
+systems = [f"system5-{final_dim}-DPPC-DPPA-{strain}-NVT",f"system6-{final_dim}-DOPC-DOPA-{strain}-NVT"]
+#systems = [f"system4-{final_dim}-DPPC-DPPS-{strain}-NVT",f"system5-{final_dim}-DPPC-DPPA-{strain}-NVT",f"system6-{final_dim}-DOPC-DOPA-{strain}-NVT"]
 ensemble = "NVT"
-strain = "0.2strain"
+size = "large"
 
 #setting paths
 script_dir = Path(__file__).resolve().parent
@@ -30,69 +20,69 @@ mdp_path = Path(script_dir.parent /"mdps")
 
 analysis = util.analysis_path
 analysis_curv_folder = f"curvature_selection"
-system_analysis_folder = analysis/analysis_curv_folder/ensemble/f"system{sys}-{initial_dim}-{lipid}-{frame}ps-NVT"
-system_analysis_folder.mkdir(exist_ok = True)
-#system_analysis_time_folder = f"system{sys}-{initial_dim}-{lipid}-{frame}ps-{ensemble}"
-# analysis_curv_dir = analysis/analysis_curv_folder/f"{compression}_{sim_time}ns"/f"{system_analysis_folder}"/f"{system_analysis_time_folder}"
-# analysis_curv_dir.mkdir(exist_ok = True)
 
+for system in systems:
 
-top_file = system_analysis_folder/ f"{final_dim}-system.top"
-    
-#create folder and path for equilibration
-equilibration_folder = system_analysis_folder / f"equil"
-equilibration_folder.mkdir(exist_ok = True)
-equilibration_path = system_analysis_folder/ equilibration_folder
-equilibration_number = 7.2
-gro = system_analysis_folder/ f"minimization7.1.gro"
+    system_analysis_folder = analysis/analysis_curv_folder/ensemble/"buckled"/system
+    equilibration_folder = system_analysis_folder/"equil"
+    top_file = system_analysis_folder/ f"{size}-system.top"
+        
+    #set the starting equilibration number
+    equilibration_number = 7.2
+    gro = system_analysis_folder/"min"/ "minimization7.1.gro"
 
-while equilibration_number <= 7.7:
-    # Define files 
-    equil_mdp = mdp_path / f"step{equilibration_number}_equilibration.mdp"
-    tpr_file = equilibration_path / f"equilibration{equilibration_number}.tpr"
-    output_file_equil = equilibration_path / f"equilibration{equilibration_number}"
-    if equilibration_number == 7.2: #running 7.2 equilibration step seperately from the other because it does not require a .cpt file
-        #create .tpr
-        equil_tpr = f" gmx grompp -p {top_file} -f {equil_mdp} -c {gro} -r {gro} -o {tpr_file} -maxwarn 1"
-        subprocess.run(equil_tpr, shell = True, check = True)
-
-        #run equilibration
-        equil_mdrun = f" gmx mdrun -nt 4 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
-        subprocess.run(equil_mdrun, shell = True, check = True)
-
-        #input the equilibration gro file as new gro
-        gro = equilibration_path / f"equilibration{equilibration_number}"
-
-        equilibration_number += .1
-    #runs 6.3 and above equilibration step 
-    if equilibration_number < 7.7: 
-        #re-define files 
+    while equilibration_number < 7.7:
+        # Define files 
         equil_mdp = mdp_path / f"step{equilibration_number}_equilibration.mdp"
-        tpr_file = equilibration_path / f"equilibration{equilibration_number}.tpr"
-        output_file_equil = equilibration_path / f"equilibration{equilibration_number}"
-        previous_equilibration_number = round(equilibration_number - 0.1,1) 
-        cpt_file = equilibration_path / f"equilibration{previous_equilibration_number}.cpt"
+        tpr_file = equilibration_folder / f"equilibration{equilibration_number}.tpr"
+        output_file_equil = equilibration_folder / f"equilibration{equilibration_number}"
+        
+        if equilibration_number == 7.2: #running 7.2 equilibration step seperately from the other because it does not require a .cpt file
+            #create .tpr
+            equil_tpr = f" gmx grompp -p {top_file} -f {equil_mdp} -c {gro} -r {gro} -o {tpr_file} -maxwarn 1"
+            subprocess.run(equil_tpr, shell = True, check = True)
 
-        #create .tpr
-        equil_tpr = f" gmx grompp -p {top_file} -f {equil_mdp} -c {gro} -r {gro} -o {tpr_file} -t {cpt_file} -maxwarn 1"
-        subprocess.run(equil_tpr, shell = True, check = True)
+            #run equilibration
+            equil_mdrun = f" gmx mdrun -nt 32 -update gpu -gpu_id 0  -pin off -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
+            subprocess.run(equil_mdrun, shell = True, check = True)
 
-        #run equilibration
-        equil_mdrun = f" gmx mdrun -nt 4 -update gpu -gpu_id 0  -pin on -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
-        subprocess.run(equil_mdrun, shell = True, check = True)
+            #input the equilibration gro file as new gro
+            gro = equilibration_folder / f"equilibration{equilibration_number}.gro"
 
-        #update gro file 
-        gro = equilibration_path/ f"equilibration{equilibration_number}"
+            equilibration_number += .1
 
-        equilibration_number = round(equilibration_number + 0.1,1) 
+        #runs 7.3 and above equilibration step. Seperate because you need a checkpoint file.
+        if equilibration_number < 7.7: 
+
+            #re-define files 
+            equil_mdp = mdp_path / f"step{equilibration_number}_equilibration.mdp"
+            tpr_file = equilibration_folder / f"equilibration{equilibration_number}.tpr"
+            output_file_equil = equilibration_folder / f"equilibration{equilibration_number}"
+            previous_equilibration_number = round(equilibration_number - 0.1,1) 
+            cpt_file = equilibration_folder / f"equilibration{previous_equilibration_number}.cpt" #checkpoint from previous equilibrium run
+
+            #creates .tpr to be used in the mdrun
+            equil_tpr = f" gmx grompp -p {top_file} -f {equil_mdp} -c {gro} -r {gro} -o {tpr_file} -t {cpt_file} -maxwarn 1"
+            subprocess.run(equil_tpr, shell = True, check = True)
+
+            #run equilibration
+            equil_mdrun = f" gmx mdrun -nt 32 -update gpu -gpu_id 0  -pin off -v -pinstride 1 -nstlist 100 -deffnm {output_file_equil}"
+            subprocess.run(equil_mdrun, shell = True, check = True)
+
+            #update gro file 
+            gro = equilibration_folder/ f"equilibration{equilibration_number}.gro"
+            
+            equilibration_number = round(equilibration_number + 0.1,1) 
+
+            
 
     # if equilibration_number == 7.7: 
     #     #re-define files 
     #     equil_mdp = mdp_path / f"step{equilibration_number}_equilibration.mdp"
-    #     tpr_file = equilibration_path / f"equilibration{equilibration_number}.tpr"
-    #     output_file_equil = equilibration_path / f"equilibration{equilibration_number}"
+    #     tpr_file = equilibration_folder / f"equilibration{equilibration_number}.tpr"
+    #     output_file_equil = equilibration_folder / f"equilibration{equilibration_number}"
     #     previous_equilibration_number = round(equilibration_number - 0.1,1) 
-    #     cpt_file = equilibration_path / f"equilibration{previous_equilibration_number}.cpt"
+    #     cpt_file = equilibration_folder / f"equilibration{previous_equilibration_number}.cpt"
 
     #     #create .tpr
     #     equil_tpr = f" gmx grompp -p {top_file} -f {equil_mdp} -c {gro} -r {gro} -o {tpr_file} -t {cpt_file} -maxwarn 1"
@@ -103,7 +93,7 @@ while equilibration_number <= 7.7:
     #     subprocess.run(equil_mdrun, shell = True, check = True)
 
     #     #update gro file 
-    #     gro = equilibration_path/ f"equilibration{equilibration_number}"
+    #     gro = equilibration_folder/ f"equilibration{equilibration_number}"
 
     #     equilibration_number = round(equilibration_number + 0.1,1) 
         
