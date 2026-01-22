@@ -10,18 +10,18 @@ from util import base_path
 import subprocess
 
 
-systems = [1]
+systems = [2]
 initial_dim = "8x8x25"
 final_dim = 'large'
-pressure = 3
-sim_time = 800
-strain = .6
+pressure = 35
+sim_time = 1000
+strain = .15
 #use if you are looking directly at the vmd simulation 
 # vmd_frame = 50
 # frame =  int(vmd_frame*1000*.02)
 
 #use if you're pulling from a particular time (ps)
-frame =  int(524200)
+frame =  int(458000)
 
 for sys in systems:
     system_folder = f"system{sys}-{initial_dim}"
