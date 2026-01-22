@@ -24,7 +24,7 @@ for sys in systems:
     gro_file_input = system_path/"equil-xsmall"/"equilibration6.7.gro"
 
     for size, sizes in dimensions.items():
-        gro_file_output = tessilation_folder/f"{size}-tessilation.gro"
+        gro_file_output = tessilation_folder/f"{size}-tessellation.gro"
         if not gro_file_output.exists():
             tessilation_run = f"gmx genconf -f {gro_file_input} -o {gro_file_output} -nbox {sizes} -dist 0 0 0"
             subprocess.run(tessilation_run, shell=True, check=True)
@@ -136,8 +136,6 @@ for sys in systems:
 
 
             elif size == 'small':
-                tessellations = 2
-                
                 seperated_DOPC = (DOPC_count/tessellations)/2 #divide by two because two leaflets
                 seperated_DOPS = (DOPS_count/tessellations)/2
                 seperated_DOPA = (DOPA_count/tessellations)/2
@@ -149,18 +147,31 @@ for sys in systems:
                 seperated_CL = CL/tessellations
                 top_file.writelines(unchanged_lines)
                 for i in range(tessellations):
-                    if DOPC_count > 0:
+                    if DOPC_count > 0: #repeat lipid write out twice to account for upper and lower leaflet 
                         top_file.write(f"DOPC {seperated_DOPC}\n")
                     if DOPS_count > 0:
                         top_file.write(f"DOPS {seperated_DOPS}\n")
                     if DOPA_count > 0:
-                        top_file.write(f"DOPA {seperated_DOPA}\n")
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
                     if DPPC_count > 0:
                         top_file.write(f"DPPC {seperated_DPPC}\n")
                     if DPPS_count > 0:
                         top_file.write(f"DPPS {seperated_DPPS}\n")
                     if DPPA_count > 0:
                         top_file.write(f"DPPA {seperated_DPPA}\n")
+                    if DOPC_count > 0: 
+                        top_file.write(f"DOPC {seperated_DOPC}\n")
+                    if DOPS_count > 0:
+                        top_file.write(f"DOPS {seperated_DOPS}\n")
+                    if DOPA_count > 0:
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
+                    if DPPC_count > 0:
+                        top_file.write(f"DPPC {seperated_DPPC}\n")
+                    if DPPS_count > 0:
+                        top_file.write(f"DPPS {seperated_DPPS}\n")
+                    if DPPA_count > 0:
+                        top_file.write(f"DPPA {seperated_DPPA}\n")
+
 
                     top_file.write(f"W {seperated_W}\n")
                     top_file.write(f"NA {seperated_NA}\n")
@@ -179,20 +190,31 @@ for sys in systems:
                 seperated_CL = CL/tessellations
                 top_file.writelines(unchanged_lines)
                 for i in range(tessellations):
-                    if DOPC_count > 0:
+                    if DOPC_count > 0: #repeat lipid write out twice to account for upper and lower leaflet 
                         top_file.write(f"DOPC {seperated_DOPC}\n")
-                        print(seperated_DOPC)
                     if DOPS_count > 0:
                         top_file.write(f"DOPS {seperated_DOPS}\n")
-                        print(seperated_DOPS)
                     if DOPA_count > 0:
-                        top_file.write(f"DOPA {seperated_DOPA}\n")
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
                     if DPPC_count > 0:
                         top_file.write(f"DPPC {seperated_DPPC}\n")
                     if DPPS_count > 0:
                         top_file.write(f"DPPS {seperated_DPPS}\n")
                     if DPPA_count > 0:
                         top_file.write(f"DPPA {seperated_DPPA}\n")
+                    if DOPC_count > 0: 
+                        top_file.write(f"DOPC {seperated_DOPC}\n")
+                    if DOPS_count > 0:
+                        top_file.write(f"DOPS {seperated_DOPS}\n")
+                    if DOPA_count > 0:
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
+                    if DPPC_count > 0:
+                        top_file.write(f"DPPC {seperated_DPPC}\n")
+                    if DPPS_count > 0:
+                        top_file.write(f"DPPS {seperated_DPPS}\n")
+                    if DPPA_count > 0:
+                        top_file.write(f"DPPA {seperated_DPPA}\n")
+
 
                     top_file.write(f"W {seperated_W}\n")
                     top_file.write(f"NA {seperated_NA}\n")
@@ -211,12 +233,24 @@ for sys in systems:
                 seperated_CL = CL/tessellations
                 top_file.writelines(unchanged_lines)
                 for i in range(tessellations):
-                    if DOPC_count > 0:
+                    if DOPC_count > 0: #repeat lipid write out twice to account for upper and lower leaflet 
                         top_file.write(f"DOPC {seperated_DOPC}\n")
                     if DOPS_count > 0:
                         top_file.write(f"DOPS {seperated_DOPS}\n")
                     if DOPA_count > 0:
-                        top_file.write(f"DOPA {seperated_DOPA}\n")
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
+                    if DPPC_count > 0:
+                        top_file.write(f"DPPC {seperated_DPPC}\n")
+                    if DPPS_count > 0:
+                        top_file.write(f"DPPS {seperated_DPPS}\n")
+                    if DPPA_count > 0:
+                        top_file.write(f"DPPA {seperated_DPPA}\n")
+                    if DOPC_count > 0: 
+                        top_file.write(f"DOPC {seperated_DOPC}\n")
+                    if DOPS_count > 0:
+                        top_file.write(f"DOPS {seperated_DOPS}\n")
+                    if DOPA_count > 0:
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
                     if DPPC_count > 0:
                         top_file.write(f"DPPC {seperated_DPPC}\n")
                     if DPPS_count > 0:
@@ -240,12 +274,24 @@ for sys in systems:
                 seperated_CL = CL/tessellations
                 top_file.writelines(unchanged_lines)
                 for i in range(tessellations):
-                    if DOPC_count > 0:
+                    if DOPC_count > 0: #repeat lipid write out twice to account for upper and lower leaflet 
                         top_file.write(f"DOPC {seperated_DOPC}\n")
                     if DOPS_count > 0:
                         top_file.write(f"DOPS {seperated_DOPS}\n")
                     if DOPA_count > 0:
-                        top_file.write(f"DOPA {seperated_DOPA}\n")
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
+                    if DPPC_count > 0:
+                        top_file.write(f"DPPC {seperated_DPPC}\n")
+                    if DPPS_count > 0:
+                        top_file.write(f"DPPS {seperated_DPPS}\n")
+                    if DPPA_count > 0:
+                        top_file.write(f"DPPA {seperated_DPPA}\n")
+                    if DOPC_count > 0: 
+                        top_file.write(f"DOPC {seperated_DOPC}\n")
+                    if DOPS_count > 0:
+                        top_file.write(f"DOPS {seperated_DOPS}\n")
+                    if DOPA_count > 0:
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
                     if DPPC_count > 0:
                         top_file.write(f"DPPC {seperated_DPPC}\n")
                     if DPPS_count > 0:
@@ -269,12 +315,24 @@ for sys in systems:
                 seperated_CL = CL/tessellations
                 top_file.writelines(unchanged_lines)
                 for i in range(tessellations):
-                    if DOPC_count > 0:
+                    if DOPC_count > 0: #repeat lipid write out twice to account for upper and lower leaflet 
                         top_file.write(f"DOPC {seperated_DOPC}\n")
                     if DOPS_count > 0:
                         top_file.write(f"DOPS {seperated_DOPS}\n")
                     if DOPA_count > 0:
-                        top_file.write(f"DOPA {seperated_DOPA}\n")
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
+                    if DPPC_count > 0:
+                        top_file.write(f"DPPC {seperated_DPPC}\n")
+                    if DPPS_count > 0:
+                        top_file.write(f"DPPS {seperated_DPPS}\n")
+                    if DPPA_count > 0:
+                        top_file.write(f"DPPA {seperated_DPPA}\n")
+                    if DOPC_count > 0: 
+                        top_file.write(f"DOPC {seperated_DOPC}\n")
+                    if DOPS_count > 0:
+                        top_file.write(f"DOPS {seperated_DOPS}\n")
+                    if DOPA_count > 0:
+                        top_file.write(f"DOPA {seperated_DOPA}\n")                    
                     if DPPC_count > 0:
                         top_file.write(f"DPPC {seperated_DPPC}\n")
                     if DPPS_count > 0:
