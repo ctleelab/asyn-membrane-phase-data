@@ -1,0 +1,139 @@
+#!/usr/local/bin/vmd
+# VMD script written by save_state $$Revision: 1.48 $$
+# VMD version: 1.9.4a55
+
+# Display settings
+display eyesep       0.065000
+display focallength  2.000000
+display height       4.000000
+display distance     4.0
+display projection   Orthographic
+display nearclip set 0.500000
+display farclip  set 10.000000
+display depthcue   off
+display cuestart   0.500000
+display cueend     10.000000
+display cuestart   0.500000
+display cueend     10.000000
+display cuedensity 0.0010000
+display cuemode    Exp2
+display shadows on
+display ambientocclusion on
+display aoambient 0.800000
+display aodirect 0.300000
+display dof off
+display dof_fnumber 64.000000
+display dof_focaldist 0.700000
+
+#Define variables for picking the system
+set strain "strain15"
+set system "DPPC-DPPS"
+set view "side"
+
+# set background color to white (this will become transparent)
+color Display Background white
+
+#import files
+mol new $PATH/$system-$strain-production-stripped-centered.gro type gro first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+mol addfile $PATH/$system-$strain-sliced.xtc type xtc first 1 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+
+#center based on the lipids
+set sel [atomselect top "resname DPPC DPPA DPPS DOPC DOPS DOPA"]
+set center [measure center $sel]
+
+
+# ---- custom colors ----
+color change rgb 0 1.000 0.876 0.253   ;# yellow (PO4)
+color change rgb 1 0.676 1.000 0.528   ;# light green (NC3, CNO)
+color change rgb 2 0.800 0.600 1.000   ;# light purple
+color change rgb 3 0.148 0.764 1.000   ;# acyl chains
+
+
+# representing PO4 beads 
+# all PO4 beads are of equal size independent of lipid type
+mol delrep 0 top
+mol representation Licorice 3.6199 12 12 
+mol selection {resname DOPC DPPC DOPS DPPS DOPA DPPA and name PO4}
+mol material VDW
+mol color ColorID 0
+mol addrep top
+
+
+#representing NC3 beads 
+mol representation Licorice 2.2337 12 12 
+mol selection {resname DOPC DPPC and name NC3}
+mol material VDW
+mol color ColorID 2
+mol addrep top
+
+
+# representing GL1 and GL2 beads 
+# all GL2 and GL1 beads are of equal size independent of lipid type
+mol representation Licorice 1.4592 12 12 
+mol selection {resname DOPC DPPC DOPS DPPS DOPA DPPA and name GL1 GL2}
+mol material VDW
+mol color ColorID 1
+mol addrep top
+
+# representing CNO bead
+# all CNO beads are of equal size independent of lipid type
+mol representation Licorice 2.8005 12 12 
+mol selection {resname DOPS DPPS and name CNO}
+mol material VDW
+mol color ColorID 2
+mol addrep top
+
+
+#representing acyl chain beads saturated for DP lipids 
+mol representation Licorice 1.9026 12 12 
+mol selection {resname DPPC DPPA DPPS and name C2A C2B C3A C3B C4A C4B}
+mol material VDW
+mol color ColorID 3
+mol addrep top
+
+
+
+#representing acyl chain beads saturated for DO lipids 
+mol representation Licorice 1.9026 12 12
+mol selection {resname DOPC DOPA DOPS and name C1A C1B C3A C3B C4A C4B}
+mol material VDW
+mol color ColorID 3
+mol addrep top
+
+
+#representing saturated acyl chain beads connected to glycerol for DP lipids 
+mol representation Licorice 1.3189 12 12
+mol selection {resname DPPC DPPA DPPS and name C1A C1B}
+mol material VDW
+mol color ColorID 3
+mol addrep top
+
+
+
+#representing acyl chain beads unsaturated for DO lipids 
+mol representation Licorice 1.9755 12 12 
+mol selection {resname DOPC DOPS DOPA and name D2A D2B}
+mol material VDW
+mol color ColorID 3
+mol addrep top
+
+# change the view of system to side
+rotate x by 270
+
+
+#source ../cg_bonds.tcl
+#cg_bonds -top system.top
+
+display resize 1500 1500
+
+set nframes [molinfo top get numframes]
+
+set outfolder "/home/casakurai/scratch/asyn-phase-binding-data/Figures/MD-images/$strain/$system/$view" 
+
+#saving the frames of the trajectory
+for {set i 0} {$i < $nframes} {incr i} {
+    animate goto $i
+    # render the frame as TGA with alpha
+    set fname [format $outfolder/frame%04d.png $i]
+    render TachyonInternal $fname -res 1500 1500 -trans_vmd
+}
