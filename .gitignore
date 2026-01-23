@@ -20,3 +20,5 @@ analysis/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+Figures/
+simulations/
