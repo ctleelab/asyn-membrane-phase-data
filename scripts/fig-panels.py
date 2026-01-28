@@ -6,8 +6,9 @@ from pathlib import Path
 import ctleelab_plothelper.plothelpers as ph
 from PIL import Image
 
-configuration = "strain15"
-views = ["side"]
+configuration = "strain2"
+movietype = "lipid-type"
+views = ["side","top"]
 lipid_compositions = {
     "DOPC": [2, 0],
     "DPPC": [2, 1],
@@ -20,8 +21,8 @@ lipid_compositions = {
 
 # setting paths
 script_dir = Path(__file__).resolve().parent
-systems_path = Path(script_dir.parent / "Figures"/"MD-images"/configuration)
-compiled_path = systems_path/"compiled"
+systems_path = Path(script_dir.parent / "Figures"/"MD-images"/movietype/configuration)
+compiled_path = systems_path/"compiled"/"all-systems"
 compiled_path.mkdir(exist_ok=True)
 
 
@@ -56,5 +57,5 @@ for view in views:
                 ax[i,j].imshow(cropped_img)
                 ax[i, j].axis("off")   
                 ax[i,j].set_title(composition, fontsize = 16)
-            plt.savefig(compiled_path/f"side-frame{number}.png", transparent=True)
+            plt.savefig(compiled_path/f"{view}-frame{number}.png", transparent=True)
         plt.close(fig)
