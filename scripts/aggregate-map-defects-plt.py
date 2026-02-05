@@ -1,13 +1,4 @@
-#outline of code
-#1) create map 
-#2) average map over frames
-#3) compress the y dimension down 
 
-
-#map defects in grid space, there will an issue as the same grid doesn't represent the same area in the membrane through each frame
-
-
-#plot defects
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import MDAnalysis as mda
@@ -17,12 +8,16 @@ import ctleelab_plothelper.plothelpers as ph
 import matplotlib.colors as mcolors
 import matplotlib.gridspec as gridspec
 from scipy import ndimage as scipy_ndimage
+from scipy.stats import linregress
 
 
-configuration = "strain2"
+
+configuration = "flat" 
 defect_cut_off = 10
 time = "100ps"
 defect_type = ["deep", "shallow", "all"]
+lower_limit_size_defect = 15
+upper_limit_size_defect = 60
 
 
 lipid_compositions = {
@@ -34,11 +29,12 @@ lipid_compositions = {
     "DPPC-DPPS": [2, 1],
 }
 
+lipid_comp = list(lipid_compositions.keys())
 
 analysis_path = f"/home/casakurai/scratch/asyn-phase-binding-data/analysis/defect-data-{time}"
-analysis_path = Path(analysis_path)
-analysis_defect_path = analysis_path/f"defect-cut-off-{defect_cut_off}A"
-compiled_data = Path(f"/home/casakurai/scratch/asyn-phase-binding-data/Figures/defect-data/{configuration}/defect-cut-off-{defect_cut_off}A")
+# analysis_path = Path(analysis_path)
+analysis_defect_path = Path(f"{analysis_path}/defect-cut-off-{defect_cut_off}A")
+compiled_data = Path(f"/home/casakurai/scratch/asyn-phase-binding-data/Figures/defect-data-{time}/{configuration}/defect-cut-off-{defect_cut_off}A")
 compiled_data.mkdir(exist_ok=True)
 
 #dictionary containing the systems for spatial weight plot 
@@ -136,22 +132,22 @@ for composition, position in lipid_compositions.items():
     sum_shallow_defect_across_frames_along_x =  np.sum(shallow_defect_counts_per_frame_along_x, axis = 0)
     sum_all_defect_across_frames_along_x =  np.sum(all_defect_counts_per_frame_along_x, axis = 0)
 
-    #divide by the number of frames 
-    #average count at a particular grid 
-    avg_deep_defect_across_frames_along_x =  sum_deep_defect_across_frames_along_x/n_frames
-    avg_shallow_defect_across_frames_along_x =  sum_shallow_defect_across_frames_along_x/n_frames
-    avg_all_defect_across_frames_along_x =  sum_all_defect_across_frames_along_x/n_frames
+    # #divide by the number of frames 
+    # #average count at a particular grid 
+    # avg_deep_defect_across_frames_along_x =  sum_deep_defect_across_frames_along_x/n_frames
+    # avg_shallow_defect_across_frames_along_x =  sum_shallow_defect_across_frames_along_x/n_frames
+    # avg_all_defect_across_frames_along_x =  sum_all_defect_across_frames_along_x/n_frames
 
 
-    #total average defects in one slice of y across all frames 
-    sum_total_avg_deep_defects_across_frames_along_x = np.sum(avg_deep_defect_across_frames_along_x, axis = 0 )
-    sum_total_avg_shallow_defects_across_frames_along_x = np.sum(avg_shallow_defect_across_frames_along_x, axis = 0)
-    sum_total_avg_all_defects_across_frames_along_x = np.sum(avg_all_defect_across_frames_along_x, axis = 0)
+    #total defects in the entire membrane 
+    sum_total_deep_defects_across_frames = np.sum(sum_deep_defect_across_frames_along_x, axis = 0 )
+    sum_total_shallow_defects_across_frames = np.sum(sum_shallow_defect_across_frames_along_x, axis = 0)
+    sum_total_all_defects_across_frames = np.sum(sum_all_defect_across_frames_along_x, axis = 0)
     
     #percentage of defects in particular region of the membrane
-    percent_deep_defects_x_dimension_along_x = np.divide(avg_deep_defect_across_frames_along_x, sum_total_avg_deep_defects_across_frames_along_x)
-    percent_shallow_defects_x_dimension_along_x = np.divide(avg_shallow_defect_across_frames_along_x, sum_total_avg_shallow_defects_across_frames_along_x)
-    percent_all_defects_x_dimension_along_x = np.divide(avg_all_defect_across_frames_along_x, sum_total_avg_all_defects_across_frames_along_x)
+    percent_deep_defects_x_dimension_along_x = np.divide(sum_deep_defect_across_frames_along_x, sum_total_deep_defects_across_frames)
+    percent_shallow_defects_x_dimension_along_x = np.divide(sum_shallow_defect_across_frames_along_x, sum_total_shallow_defects_across_frames)
+    percent_all_defects_x_dimension_along_x = np.divide(sum_all_defect_across_frames_along_x, sum_total_all_defects_across_frames)
 
     #handeling to get average z-coord per x 
     avg_z_coord_across_frames = np.mean(z_coord_per_frame, axis = 0)
@@ -169,8 +165,10 @@ for composition, position in lipid_compositions.items():
     systems_dict_height[composition] = avg_z_coord_across_frames
 
 
-#percentage of defects in particular region of the membrane# 
-#tells you where defects tend to be located along x
+##############################################################################################
+#########percentage of defects in particular region of the membrane in the x-dimension######### 
+##############################################################################################
+
 for type in defect_type:
     with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
         fig = plt.figure(figsize=(10,6))
@@ -225,7 +223,11 @@ for type in defect_type:
     plt.close()
 
 
-#plot height of membranes 
+
+########################################
+#########height of the membrane######### 
+########################################
+
 with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
     fig = plt.figure(figsize=(10,6))
 
@@ -273,7 +275,9 @@ plt.savefig(f"averaged-frames-height-{configuration}")
 plt.close()
 
 
-#plot for heatmap, where each grid has a value representing the probability of having a defect
+#######################################################################################################
+#########heatmap, where each grid has a value representing the probability of having a defect ######### 
+#######################################################################################################
 for type in defect_type:
     with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
         fig = plt.figure(figsize=(10,6))
@@ -328,60 +332,149 @@ for type in defect_type:
     plt.close()
 
 
+#####################################################################
+###plot for the probability of finding a defect of a certain size### 
+#####################################################################
+
+#custom axis to match PackMem data
+major_probs = np.array([1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6]) 
+
+system_defect_sizes = {}
+with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
+    fig,ax = ph.fixed_size_subplots(1, 1, subwidth=4, subheight=3)
+    for composition, position in lipid_compositions.items():
+        folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
+        defect_counts = np.load(folder_system/"output-defects-upper.npy")
+
+        all_defect_sizes = [] #a list that states has each defect size 
+        bins = np.arange(0, 400, 1) #define bins so that they are equal between systems
+
+        for frame_defects in defect_counts:
+            masked_all_defects_num = np.where((frame_defects < 1), 1, 0)
+
+            label_all, nfeat_all = scipy_ndimage.label(masked_all_defects_num)
+
+            for i in range(1, nfeat_all + 1):
+                defect_size = np.count_nonzero(label_all == i)
+                all_defect_sizes.append(defect_size)
+        system_defect_sizes[composition] = all_defect_sizes 
+
+        #creating a histogram to represent the probability
+        counts, _ = np.histogram(
+            all_defect_sizes, bins = bins
+        )
+        probabilities = counts / counts.sum()
+        bin_centers = 0.5 * (bins[1:] + bins[:-1])
+
+        mask = probabilities > 0
+        areas_nonzero = bin_centers[mask]
+        log_probabilities = np.log(probabilities[mask])
+        
+        #apply limits of defect size for fitting
+        masks_limits = (areas_nonzero >= lower_limit_size_defect)
+        areas_nonzero = areas_nonzero[masks_limits]
+        log_probabilities = log_probabilities[masks_limits]
+
+        #scatterplot 
+        ax.scatter(areas_nonzero, log_probabilities, s = 5, alpha =.7, label = composition)
+
+        #linear regression fit 
+        linear_regression = linregress(areas_nonzero, log_probabilities)
+
+        slope = linear_regression.slope
+        intercept = linear_regression.intercept
+        r2_value = linear_regression.rvalue**2 
+
+        xfit = np.linspace(min(all_defect_sizes), 100, 100)
+        yfit = slope * xfit + intercept 
+
+ax.plot(xfit, yfit, label = f"y={slope:.2f}x+{intercept:.2f}, R^2={r2_value:.2f}")
+ax.set_yticks(np.log(major_probs))
+ax.set_yticklabels([r"$10^{-1}$", r"$10^{-2}$", r"$10^{-3}$", r"$10^{-4}$", r"$10^{-5}$", r"$10^{-6}$"])
+ax.set_ylabel("ln(Probability)")
+ax.set_xlabel("Defect Area (A^2)")
+ax.set_ylim(np.log(1e-6), 0) 
+ax.legend(loc = "upper right", fontsize = "small")
+plt.tight_layout()
+plt.savefig(f"all-probability-{composition}-defect-size-{configuration}")
+plt.close()
 
 
-# #plot for defect size# 
-# for type in defect_type:
-#     with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
-#         fig = plt.figure(figsize=(10,6))
+######################################################
+###violin scatterplot to visualize all defect sizes### 
+######################################################
+
+def violin_scatter_plot(data):
+    systems = list(data.keys())
+    list_of_defect_sizes = [data[sys] for sys in systems]
+
+    x = np.arange(1, len(systems) + 1)
+
+    with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
+        fig, ax = ph.fixed_size_subplots(1, 1, subwidth=3, subheight=1.5)
+
+        for i, sizes in enumerate(list_of_defect_sizes):
+            # jitter around x position
+            jitter = np.random.normal(loc=0, scale=0.05, size=len(sizes))
+            ax.scatter(
+                np.full(len(sizes), x[i]) + jitter,
+                sizes,
+                s=1,
+                alpha=0.6,
+            )
+
+        ax.set_xlabel("Systems")
+        ax.set_ylabel("Defect size (Å$^2$)")
+        ax.set_xticks(x)
+        #ax.set_ylim(15,100)
+        ax.set_xticklabels(lipid_comp, rotation=45, ha="right")
+
+        plt.savefig(f"defect-size-scatter-{configuration}.png", dpi=300)
+        plt.show()
+
+violin_scatter_plot(system_defect_sizes)
+
+##########################################
+###bar plot avg defect size over frames### 
+##########################################
+def bar_graph_system(data):
+    systems = list(data.keys())
+    list_of_defect_sizes  = [data[sys] for sys in systems]
+    avg_defects_size = [np.mean(sizes) for sizes in list_of_defect_sizes]
+    std_defect_size = [np.std(sizes) for sizes in list_of_defect_sizes]
+
+
+
+    #set labels for system
+    x = np.arange(len(systems))  
+
+    width = 0.35 
     
-#         gs = gridspec.GridSpec(
-#             3, 3,
-#             width_ratios=[1, 1, 0.05],  
-#             wspace=0.3,
-#             hspace=1
-#         )
+    with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
+        fig, ax = ph.fixed_size_subplots(1, 1, subwidth=3, subheight=3)
+        #bar1 = ax.bar(x - width/2, avg_peak_defects, width, yerr=std_peak_defects, label='Peak Defects', capsize=5)
+        bar2 = ax.bar(x + width/2,  avg_defects_size, width, yerr = std_defect_size, label='Total Defects', capsize=5)
 
-#         ax_array = np.empty((3, 2), dtype=object)
+        ax.set_xlabel('Systems')
+        ax.set_ylabel('Average defect size A^2')
+        ax.set_xticks(x)
 
-#         for composition, position in lipid_compositions.items():
-#             folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
-#             defect_counts = np.load(folder_system/"output-defects-upper.npy")
+        ax.set_xticklabels(lipid_comp, rotation=45, ha='right')
+        ax.legend()
 
-#             all_defect_sizes = []
-
-#             for frame in np.arange(0, len(defect_counts)):
-#                 frame_defects = defect_counts[frame]
-#                 #msk of all defects
-#                 masked_all_defects_num = np.where(
-#                     frame_defects < 1,
-#                     1,
-#                     0
-#                 )
+        # Add value annotations on top of bars
+        for bar_group in [bar2]:
+            for bar in bar_group:
+                height = bar.get_height()
+                ax.annotate(f'{height:.1f}',
+                            xy=(bar.get_x() + bar.get_width() / 2, height),
+                            xytext=(0, 3), 
+                            textcoords="offset points",
+                            ha='center', va='bottom')
 
 
-#                 # LABEL CONNECTED COMPONENTS IN BINARY DEFECT MAP
-#                 label_all, nfeat_all = scipy_ndimage.label(masked_all_defects_num)
-                
-#                 for i in range(1, nfeat_all + 1):
-#                     mask = np.where(label_all == i)
-#                     all_defect_sizes.append(np.count_nonzero(mask))
-            
+        fig.tight_layout()
+        plt.savefig(f"defect-size-bar-plt-avg-frames-{configuration}.png")
+        plt.show()
 
-#             # #divide by the number of frames to get an average
-#             # all_defect_sizes_np = np.array(all_defect_sizes)
-#             # average_all_defect_sizes_np = all_defect_sizes_np/600 #divide by the number of frames 
-
-#             #denotes where the graph will lie
-#             i, j = position
-#             ax = fig.add_subplot(gs[i,j])
-#             ax_array[i, j] = ax  
-            
-#             ax.hist(all_defect_sizes, bins=50)
-
-#             ax.set_xlabel("Defect size (A^2)")
-#             ax.set_ylabel("Count")
-#             ax.set_title(composition, fontsize=16)
-#     plt.savefig(f"{type}-compiled-defect-size-averaged-frames-{configuration}")
-#     plt.close()
-
+bar_graph_system(system_defect_sizes )
