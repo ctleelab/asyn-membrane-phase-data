@@ -22,3 +22,4 @@ analysis/
 !.pixi/config.toml
 Figures/
 simulations/
+suv-analysis/*.csv
