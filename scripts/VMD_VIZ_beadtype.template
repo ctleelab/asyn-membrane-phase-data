@@ -26,8 +26,8 @@ display dof_fnumber 64.000000
 display dof_focaldist 0.700000
 
 #Define variables for picking the system
-set strain "strain15"
-set system "DPPC-DPPS"
+set strain "flat"
+set system "DPPC"
 set view "side"
 
 # set background color to white (this will become transparent)
@@ -128,12 +128,13 @@ display resize 1500 1500
 
 set nframes [molinfo top get numframes]
 
-set outfolder "/home/casakurai/scratch/asyn-phase-binding-data/Figures/MD-images/$strain/$system/$view" 
+set outfolder "/home/casakurai/scratch/asyn-phase-binding-data/Figures/MD-images-20ns/bead-type/$strain/$system/$view" 
+
 
 #saving the frames of the trajectory
 for {set i 0} {$i < $nframes} {incr i} {
     animate goto $i
     # render the frame as TGA with alpha
-    set fname [format $outfolder/frame%04d.png $i]
+    set fname [format $outfolder/frame%04d.tga $i]
     render TachyonInternal $fname -res 1500 1500 -trans_vmd
 }
