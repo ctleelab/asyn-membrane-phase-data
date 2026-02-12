@@ -3,7 +3,7 @@ system1/
 __pycache__/
 systems/
 mdout.mdp
-martini3-files/
+martini3-files
 analysis/
 analysis/
 *.xtc
