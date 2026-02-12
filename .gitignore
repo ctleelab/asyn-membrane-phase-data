@@ -4,7 +4,7 @@ __pycache__/
 systems/
 mdout.mdp
 analysis/
-martini3-files/
+martini3-files
 *.trr
 *.edr
 *.log
