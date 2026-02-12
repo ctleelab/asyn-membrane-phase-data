@@ -3,16 +3,18 @@ from pathlib import Path
 import numpy as np
 from util import analysis_path
 
-system = 2
 shape = "buckled"
-lipid = "DPPC"
-strain = "0.15strain"
-file_gro_path = analysis_path/"curvature_selection"/"NVT"/shape/f"system{system}-8x8x25-{lipid}-{strain}-NVT"/"prod"
-input_file_xtc = file_gro_path /"production7.7_stripped.xtc"
-input_file_gro = file_gro_path /"production7.7_stripped.gro"
-output_file_name = file_gro_path / "production7.7_stripped_centered"
+strain = "0.2strain"
 
 
+#inputs
+systems = { "1": "DOPC",
+           "2": "DPPC",
+    "3": "DOPC-DOPS",
+    "4": "DPPC-DPPS",
+    "5": "DPPC-DPPA",
+    "6": "DOPC-DOPA"
+}
 
 
 def centered_membrane(gro,xtc):
@@ -108,4 +110,10 @@ def centered_membrane(gro,xtc):
             #write out the frame
             W.write(all_atoms)
 
-centered_membrane(input_file_gro, input_file_xtc)
+
+for system, lipid in systems.items(): 
+    file_gro_path = analysis_path/"curvature_selection"/"NVT"/shape/f"system{system}-8x8x25-{lipid}-{strain}-NVT"/"prod"
+    input_file_xtc = file_gro_path /"production7.8_stripped.xtc"
+    input_file_gro = file_gro_path /"production7.8_stripped.gro"
+    output_file_name = file_gro_path / "production7.8_stripped_centered"
+    centered_membrane(input_file_gro, input_file_xtc)
