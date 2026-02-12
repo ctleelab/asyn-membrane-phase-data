@@ -9,20 +9,25 @@ import ctleelab_plothelper.plothelpers as ph
 from scipy import ndimage as scipy_ndimage
 
 
-configurations = "strain2"
+configurations = ["flat"]
 defect_cut_off = 10
 time = "100ps"
 defect_type = ["deep", "shallow", "all"]
 lower_limit_size_defect = 15
 upper_limit_size_defect = 60
 
+# lipid_compositions = {
+#     "DOPC": [0, 0],
+#     "DPPC": [0, 1],
+#     "DOPC-DOPA": [1, 0],
+#     "DPPC-DPPA": [1, 1],
+#     "DOPC-DOPS": [2, 0],
+#     "DPPC-DPPS": [2, 1]
+# }
+
 lipid_compositions = {
-    "DOPC": [0, 0],
-    "DPPC": [0, 1],
     "DOPC-DOPA": [1, 0],
-    "DPPC-DPPA": [1, 1],
-    "DOPC-DOPS": [2, 0],
-    "DPPC-DPPS": [2, 1]
+    "DPPC-DPPA": [1, 1]
 }
 
 
@@ -137,28 +142,28 @@ analysis_defect_path = Path(f"{analysis_path}/defect-cut-off-{defect_cut_off}A")
 
 
 
-# # def total_num_defect_restricted_X(defect_data,shape,centroids,restriction,configuration):
+def total_num_defect_restricted_X(defect_data,shape,centroids,restriction,configuration):
     
-# #     #center of grids at 0 
-# #     centered_centroids = centroids - np.mean(centroids)
+    #center of grids at 0 
+    centered_centroids = centroids - np.mean(centroids)
 
-# #     centroid_X_mask = (np.where((centered_centroids >= -restriction) & (centered_centroids <= restriction),1,0)).squeeze()
+    centroid_X_mask = (np.where((centered_centroids >= -restriction) & (centered_centroids <= restriction),1,0)).squeeze()
 
-# #     restricted_region_grids_with_defects =  np.where((centroid_X_mask == 1) & (defect_data == 1),1,0)
+    restricted_region_grids_with_defects =  np.where((centroid_X_mask == 1) & (defect_data == 1),1,0)
 
-# #     total_grids = len(defect_data)
-
-
-# #     defect_grids = np.sum(restricted_region_grids_with_defects)
+    total_grids = len(defect_data)
 
 
+    defect_grids = np.sum(restricted_region_grids_with_defects)
 
-# #     percent_defect_coverage = (defect_grids/total_grids)*100
 
-# #     # print("percent coverage:", percent_defect_coverage)
 
-# #     #return total_num_defects_restricted_X, total_grids_restricted_X
-# #     return defect_grids,  total_grids,  percent_defect_coverage 
+    percent_defect_coverage = (defect_grids/total_grids)*100
+
+    # print("percent coverage:", percent_defect_coverage)
+
+    #return total_num_defects_restricted_X, total_grids_restricted_X
+    return defect_grids,  total_grids,  percent_defect_coverage 
 
 
 # # ####Surface covered by defects ####
@@ -357,46 +362,132 @@ analysis_defect_path = Path(f"{analysis_path}/defect-cut-off-{defect_cut_off}A")
 #         plt.savefig(f"defect-size-bar-plt-avg-frames-{configurations}.png")
 #         plt.show()
 
-# bar_graph_system(system_defect_sizes )
+# # bar_graph_system(system_defect_sizes )
 
 
 
-# ###################################
-# ###distrubution of defect sizes ### 
-# ###################################
-# #area under curve is 1, so shape of defect histograms are comparable
+# # ###################################
+# # ###distrubution of defect sizes ### 
+# # ###################################
+# # #area under curve is 1, so shape of defect histograms are comparable
 
-system_defect_sizes = {}
-with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
-    fig,ax = ph.fixed_size_subplots(1, 1, subwidth=1, subheight=1)
-    for composition, position in lipid_compositions.items():
-        folder_system = analysis_defect_path / f"{composition}-{configurations}-production-stripped_centered"
+# system_defect_sizes = {}
+# with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
+#     fig,ax = ph.fixed_size_subplots(1, 1, subwidth=1, subheight=1)
+#     for composition, position in lipid_compositions.items():
+#         folder_system = analysis_defect_path / f"{composition}-{configurations}-production-stripped_centered"
+#         defect_counts = np.load(folder_system/"output-defects-upper.npy")
+
+#         all_defect_sizes = [] #a list that states has each defect size 
+#         bins = np.arange(0, 400, 1) #define bins so that they are equal between systems
+
+#         for frame_defects in defect_counts:
+#             masked_all_defects_num = np.where((frame_defects < 1), 1, 0)
+
+#             label_all, nfeat_all = scipy_ndimage.label(masked_all_defects_num)
+
+#             for i in range(1, nfeat_all + 1):
+#                 defect_size = np.count_nonzero(label_all == i)
+#                 all_defect_sizes.append(defect_size)
+#         system_defect_sizes[composition] = all_defect_sizes 
+
+
+#         pdf, bins = np.histogram(all_defect_sizes, bins=bins, density=True)
+#         bin_centers = 0.5 * (bins[1:] + bins[:-1])
+
+
+#         ax.bar(bin_centers, pdf, label = composition)
+
+# ax.set_ylabel("?")
+# ax.set_xlim(0,55)
+# ax.set_xlabel("Defect Area (A^2)")
+# ax.legend(loc = "upper right", fontsize = "small")
+# plt.tight_layout()
+# plt.savefig(f"all-probability-{composition}-defect-size-{configurations}")
+# plt.close()
+
+
+# ########################################
+# ###convergence of defect % coverage  ### 
+# ########################################
+
+restrictions = [25]
+defect_restricted_system = {} 
+defect_restricted_system_per_frame = {} 
+for composition in lipid_comp:
+    configurations_types = {}
+    avg_defect_per_frame ={}
+    for configuration in configurations: 
+        folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
         defect_counts = np.load(folder_system/"output-defects-upper.npy")
+        quad_centroids_np = np.load(folder_system/"output-centroids.npy")
+        shape = np.load(folder_system/"output-shape.npy")
+        X = np.load(folder_system/"output-Xshape.npy")
+        Y = np.load(folder_system/"output-Yshape.npy")
 
-        all_defect_sizes = [] #a list that states has each defect size 
-        bins = np.arange(0, 400, 1) #define bins so that they are equal between systems
+        n_frames = len(quad_centroids_np)
 
-        for frame_defects in defect_counts:
-            masked_all_defects_num = np.where((frame_defects < 1), 1, 0)
+        # perecent_cut_defects = np.empty(6, n_frames)
 
-            label_all, nfeat_all = scipy_ndimage.label(masked_all_defects_num)
+        # for percent_cutoff in [0.05, 0.1, 0.2, 0.3, 0.4, 0.5]:
 
-            for i in range(1, nfeat_all + 1):
-                defect_size = np.count_nonzero(label_all == i)
-                all_defect_sizes.append(defect_size)
-        system_defect_sizes[composition] = all_defect_sizes 
+        perecent_cut_defects = {}
+        perecent_cut_defects_per_frame ={}
+        for restriction in restrictions: 
+
+            total_defects_restricted_region_per_frame = np.empty(n_frames)
+            total_grids_restricted_region_per_frame = np.empty(n_frames)
+            percentage_defect_coverage_per_frame = np.empty(n_frames)
+        
+            for frame in np.arange(0, n_frames):
 
 
-        pdf, bins = np.histogram(all_defect_sizes, bins=bins, density=True)
-        bin_centers = 0.5 * (bins[1:] + bins[:-1])
+                defect_counts_frame = defect_counts[frame]
+                centroids_frame =  quad_centroids_np[frame, :, 0:1]
 
+                #all defect 
+                masked_all_defects_num = np.where(
+                    defect_counts_frame < 1,
+                    1,
+                    0
+                )
 
-        ax.bar(bin_centers, pdf, label = composition)
+                total_per_frame, total_grids, percent_defect_coverage = total_num_defect_restricted_X(masked_all_defects_num,shape,centroids_frame,restriction,configuration)
 
-ax.set_ylabel("?")
-ax.set_xlim(0,55)
-ax.set_xlabel("Defect Area (A^2)")
-ax.legend(loc = "upper right", fontsize = "small")
+                total_defects_restricted_region_per_frame[frame] = total_per_frame
+
+                total_grids_restricted_region_per_frame [frame] = total_grids
+
+                percentage_defect_coverage_per_frame[frame] = percent_defect_coverage
+            
+            average_defect_coverage = np.mean(percentage_defect_coverage_per_frame)
+            std_defect_coverage = np.std(percentage_defect_coverage_per_frame)
+
+            perecent_cut_defects[restriction]  = [average_defect_coverage,std_defect_coverage]
+            perecent_cut_defects_per_frame[restriction] = [percentage_defect_coverage_per_frame]
+            
+        configurations_types[configuration] = perecent_cut_defects
+        avg_defect_per_frame[configuration] = perecent_cut_defects_per_frame
+    defect_restricted_system[composition ]= configurations_types
+    defect_restricted_system_per_frame[composition] = avg_defect_per_frame
+
+#scatter plot for defect_restricted_system_per_frame
+plt.figure(figsize=(10, 6))
+
+for composition in defect_restricted_system_per_frame:
+    for configuration in defect_restricted_system_per_frame[composition]:
+        # Extract the per-frame defect coverage array
+        per_frame_array = defect_restricted_system_per_frame[composition][configuration][restriction][0]  # [0] because you stored as list
+
+        n_frames = len(per_frame_array)
+        frames = np.arange(n_frames)
+
+        # Scatter plot
+        plt.scatter(frames, per_frame_array, label=f"{composition}-{configuration}", alpha=0.6)
+
+plt.xlabel("Frame")
+plt.ylabel("Percent defect coverage")
+plt.title(f"Defect coverage per frame (restriction={restriction})")
+plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8)
 plt.tight_layout()
-plt.savefig(f"all-probability-{composition}-defect-size-{configurations}")
-plt.close()
+plt.savefig(f"frame-avg-defect-coverage{configurations}.png")
