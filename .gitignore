@@ -3,10 +3,8 @@ system1/
 __pycache__/
 systems/
 mdout.mdp
+analysis/
 martini3-files/
-analysis/
-analysis/
-*.xtc
 *.trr
 *.edr
 *.log
@@ -17,6 +15,7 @@ analysis/
 *.png
 *.log
 *.pdf
+*.xtc
 # pixi environments
 .pixi/*
 !.pixi/config.toml
