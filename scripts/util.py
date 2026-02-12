@@ -46,7 +46,7 @@ sim_path = Path("/scratch/casakurai/asyn-phase-binding-data/systems")
  
 mdp_path = ("/scratch/casakurai/asyn-phase-binding-data/systems/mdps")
 
-analysis_path = Path("/scratch/casakurai/asyn-phase-binding-data/analysis")
+analysis_path = Path("/scratch/casakurai/asyn-phase-binding-data/simulations")
 
 figures_path = Path("/scratch/casakurai/asyn-phase-binding-data/scripts/figures")
 
