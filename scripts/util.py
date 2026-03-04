@@ -40,15 +40,15 @@ system_compositions = {
 
 
 #Paths
-base_path = Path("/scratch/casakurai/asyn-phase-binding-data/systems")
+base_path = Path("/scratch/local/casakurai/asyn-phase-binding-data/systems")
 
-sim_path = Path("/scratch/casakurai/asyn-phase-binding-data/systems")
+sim_path = Path("/scratch/local/casakurai/asyn-phase-binding-data/systems")
  
-mdp_path = ("/scratch/casakurai/asyn-phase-binding-data/systems/mdps")
+mdp_path = ("/scratch/local/casakurai/asyn-phase-binding-data/systems/mdps")
 
-analysis_path = Path("/scratch/casakurai/asyn-phase-binding-data/simulations")
+analysis_path = Path("/scratch/local/casakurai/asyn-phase-binding-data/simulations")
 
-figures_path = Path("/scratch/casakurai/asyn-phase-binding-data/scripts/figures")
+figures_path = Path("/scratch/local/casakurai/asyn-phase-binding-data/scripts/figures")
 
 membrane_sel = "resname DOPC DPPC DOPS DPPS DPPA DOPA"
 po4_sel = " name PO4 GL1 GL2 "
