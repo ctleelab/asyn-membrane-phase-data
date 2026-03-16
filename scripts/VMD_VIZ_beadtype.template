@@ -27,18 +27,18 @@ display dof_focaldist 0.700000
 
 #Define variables for picking the system
 set strain "flat"
-set system "DPPC"
+set system "DOPC-DOPA"
 set view "side"
 
 # set background color to white (this will become transparent)
 color Display Background white
 
-#import files
-mol new $PATH/$system-$strain-production-stripped-centered.gro type gro first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
-mol addfile $PATH/$system-$strain-sliced.xtc type xtc first 1 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+#import files strain
+mol new $PATH/$system-$strain-production7.9-stripped.gro type gro first 0 last -1 step 1 filebonds 1 autobonds 1 waitfor all
+mol addfile $PATH/$system-$strain-production7.9-stripped.xtc type xtc first 1 last -1 step 1 filebonds 1 autobonds 1 waitfor all
 
 #center based on the lipids
-set sel [atomselect top "resname DPPC DPPA DPPS DOPC DOPS DOPA"]
+set sel [atomselect top "resname DOPC DPPA DPPS DPPC DOPS DOPA"]
 set center [measure center $sel]
 
 
@@ -126,13 +126,15 @@ rotate x by 270
 
 display resize 1500 1500
 
-set nframes [molinfo top get numframes]
+#set nframes [molinfo top get numframes]
+set nframes 29930
 
-set outfolder "/home/casakurai/scratch/asyn-phase-binding-data/Figures/MD-images-20ns/bead-type/$strain/$system/$view" 
+
+set outfolder "/scratch/local/casakurai/asyn-phase-binding-data/Figures/MD-images-20ps-1800ext/bead-type/$strain/$system/$view" 
 
 
 #saving the frames of the trajectory
-for {set i 0} {$i < $nframes} {incr i} {
+for {set i 29920} {$i < $nframes} {incr i} {
     animate goto $i
     # render the frame as TGA with alpha
     set fname [format $outfolder/frame%04d.tga $i]
