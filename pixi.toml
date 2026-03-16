@@ -16,6 +16,7 @@ mdanalysis = ">=2.10.0,<3"
 ffmpeg = ">=8.0.1,<9"
 scipy = ">=1.16.3,<2"
 imagemagick = ">=7.1.2_13,<8"
+black = ">=26.1.0,<27"
 
 [pypi-dependencies]
 ctleelab_plothelper = { git = "https://github.com/ctleelab/ctleelab-mpl-utilities.git", branch = "development"}
