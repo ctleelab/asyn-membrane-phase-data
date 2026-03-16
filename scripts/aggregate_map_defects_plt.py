@@ -14,12 +14,14 @@ from tqdm.auto import tqdm
 
 #this code relies on the grid all being uniform, which is an assumption from the PackMem-leelab
 
-configuration = "strain2" 
-defect_cut_off = 10
-time = "100ps"
+configuration = "flat" 
+defect_cut_off = 6.3
+time = "100ps-1800ext"
 defect_type = ["deep", "shallow", "all"]
 lower_limit_size_defect = 15
 upper_limit_size_defect = 60
+lipid_type = "PS"
+cutoff = 15
 
 # lipid_compositions = {
 #     "DOPC": [0, 0],
@@ -31,17 +33,23 @@ upper_limit_size_defect = 60
 # }
 
 lipid_compositions = {
-    "DOPC": [0, 0],
-    "DPPC": [0, 1]}
+    "DOPC-DOPS": [2, 0],
+    "DPPC-DPPS": [2, 1]
+}
+
+
+
 
 
 lipid_comp = list(lipid_compositions.keys())
 
-analysis_path = f"/home/casakurai/scratch/asyn-phase-binding-data/analysis/defect-data-{time}"
+analysis_path = f"/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-{time}"
 # analysis_path = Path(analysis_path)
 analysis_defect_path = Path(f"{analysis_path}/defect-cut-off-{defect_cut_off}A")
-compiled_data = Path(f"/home/casakurai/scratch/asyn-phase-binding-data/Figures/defect-data-{time}/{configuration}/defect-cut-off-{defect_cut_off}A")
+compiled_data = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-{time}/{configuration}/defect-cut-off-{defect_cut_off}A")
 compiled_data.mkdir(exist_ok=True)
+
+
 
 #dictionary containing the systems for spatial weight plot 
 systems_dict_shallow_spatial_weight_along_x = {} 
@@ -58,7 +66,11 @@ systemY_cutout_Y_artifacts ={}
 systemX_cutout_Y_artifacts ={}
 
 for composition, position in lipid_compositions.items():
-    folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
+    if configuration == "strain2":
+        folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped-centered-ext1800-cutoff"
+    if configuration == "flat": 
+        folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped-ext1800-cutoff"
+   
     defect_counts = np.load(folder_system/"output-defects-upper.npy")
     quad_centroids_np = np.load(folder_system/"output-centroids.npy")
     shape = np.load(folder_system/"output-shape.npy")
@@ -116,6 +128,37 @@ for composition, position in lipid_compositions.items():
         reshaped_deep_defects =  masked_deep_defects_num.reshape(shape)
         reshaped_all_defects =  masked_all_defects_num.reshape(shape)
 
+        #take out any defects with area < 15A 
+        #here handle the defect based on size 
+
+        
+        def filter_defects_by_size(binary_mask, cutoff):
+            label_mask, nfeat = scipy_ndimage.label(binary_mask)
+            filtered_mask = np.zeros_like(binary_mask, dtype=int)
+
+            for i in range(1, nfeat + 1):
+                defect_size = np.count_nonzero(label_mask == i)
+                if defect_size >= cutoff:
+                    filtered_mask[label_mask == i] = 1
+
+            return filtered_mask, label_mask, nfeat
+
+        # filter each defect type before any averaging
+        reshaped_shallow_defects, label_shallow, nfeat_shallow = filter_defects_by_size(
+            reshaped_shallow_defects, cutoff
+        )
+
+        reshaped_deep_defects, label_deep, nfeat_deep = filter_defects_by_size(
+            reshaped_deep_defects, cutoff
+        )
+
+        reshaped_all_defects, label_all, nfeat_all = filter_defects_by_size(
+            reshaped_all_defects, cutoff
+        )
+
+
+
+
         center = X.shape[1] // 2
 
         min_index = center - cutsize
@@ -130,11 +173,6 @@ for composition, position in lipid_compositions.items():
         #new shape of array 
         new_shape = reshaped_shallow_defects.shape
         
-        # print(stripped_reshaped_shallow_defects.shape, reshaped_shallow_defects.shape)
-        # print(np.isclose(stripped_reshaped_shallow_defects[min_index-1], reshaped_shallow_defects[min_index-1]))
-        # print(np.isclose(stripped_reshaped_shallow_defects[min_index], reshaped_shallow_defects[max_index]))
-    
-
         #sum down y, to get a count per grid in the x-dimension 
         shallow_defect_counts_per_frame_along_x[frame] = np.sum(reshaped_shallow_defects, axis = 1)
         deep_defect_counts_per_frame_along_x[frame] = np.sum(reshaped_deep_defects, axis = 1)
@@ -224,7 +262,7 @@ for type in defect_type:
         for composition, position in lipid_compositions.items():
 
             #load the correct data 
-            folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
+            folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped-centered-ext"
 
             if type == "shallow":
                 compiled_defect_counts = systems_dict_shallow_spatial_weight_along_x [composition]
@@ -258,7 +296,7 @@ for type in defect_type:
             ax.set_ylabel("Fraction of total defect density")
             ax.set_xlim(-len(compiled_defect_counts)/2, len(compiled_defect_counts)/2)
             ax.set_title(composition, fontsize=16)
-    plt.savefig(f"{type}-compiled-defects-averaged-frames-spatial-weight-{configuration}")
+    plt.savefig(f"{compiled_data}/{type}-compiled-defects-averaged-frames-spatial-weight-{configuration}-{lipid_type}")
     plt.close()
 
 ########################################
@@ -273,7 +311,7 @@ with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]
     for composition, position in lipid_compositions.items():
 
         #load the correct data 
-        folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
+        folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped-centered-ext"
         
         height_membrane = systems_dict_height[composition]
 
@@ -300,7 +338,7 @@ with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]
         ax.set_xlim(-len(height_membrane)/2, len(height_membrane)/2)
         ax.set_ylim(4000, 11000)
         ax.set_title(composition, fontsize=16)
-plt.savefig(f"averaged-frames-height-{configuration}")
+plt.savefig(f"{compiled_data}/averaged-frames-height-{configuration}-{lipid_type}")
 plt.close()
 
 ########################################################################################################################################
@@ -309,6 +347,7 @@ plt.close()
 for defect_type_name in defect_type:
     with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
         fig, ax = ph.fixed_size_subplots(1, 2, wmargin = .6, hmargin = 1,  subwidth=.95, subheight=1.1, rmargin_scale = 8)
+        #fig, ax = ph.fixed_size_subplots(1, 2, wmargin = 1, hmargin = 1,  subwidth=3, subheight=1, rmargin_scale = 8)
         ax = np.array(ax).flatten()  # flatten in case it's 2D
         legend_handles = None
         legend_labels = None
@@ -328,11 +367,11 @@ for defect_type_name in defect_type:
             x_idx = np.arange(len(height_membrane))
             x_idx_centered = (x_idx - (len(height_membrane)/2)) / 10   # convert to nm
 
-            ax[idx].scatter(x_idx_centered, height_membrane, s=7, color="blue", label="Height")
+            ax[idx].scatter(x_idx_centered, height_membrane, s=12, color="#8100ffff", label="Height")
             ax[idx].set_xlabel("X (nm)")
             ax[idx].set_ylabel("Height (nm)")
             ax[idx].set_xlim(-len(height_membrane)/20, len(height_membrane)/20)  # adjust for nm
-            ax[idx].set_ylim(0, 15)  # nm
+            ax[idx].set_ylim(0, 18)  # nm
             ax[idx].set_title(f"{composition}", fontsize=12)  # nm
             ax[idx].xaxis.set_minor_locator(MultipleLocator(2.5))
             ax[idx].xaxis.set_major_locator(MultipleLocator(5))
@@ -340,7 +379,7 @@ for defect_type_name in defect_type:
             # Secondary y-axis (defect counts)
 
             ax2 = ax[idx].twinx()
-            ax2.bar(x_idx_centered, compiled_defect_counts, width=.1, color="orange", alpha=0.5, label="Defect probability")
+            ax2.bar(x_idx_centered, compiled_defect_counts, width=.1, color="#1f91bc", alpha=0.4, label="Defect probability")
             ax2.set_ylabel("Defect probability")
             ax2.set_ylim(0,.5)
             
@@ -350,6 +389,7 @@ for defect_type_name in defect_type:
                 h2, l2 = ax2.get_legend_handles_labels()
                 legend_handles = h1 + h2
                 legend_labels = l1 + l2
+
         plt.legend(
             legend_handles,
             legend_labels,
@@ -360,8 +400,8 @@ for defect_type_name in defect_type:
         )
         plt.subplots_adjust(right=0.82)
         
-        plt.savefig(f"combined-defect-probability-and-height-{configuration}-{defect_type_name}-PC.png")
-        plt.savefig(f"combined-defect-probability-and-height-{configuration}-{defect_type_name}-PC.pdf")
+        plt.savefig(f"{compiled_data}/combined-defect-probability-and-height-{configuration}-{defect_type_name}-{lipid_type}.png")
+        plt.savefig(f"{compiled_data}/combined-defect-probability-and-height-{configuration}-{defect_type_name}-{lipid_type}.pdf")
         plt.close()
 
 
@@ -379,7 +419,7 @@ for type in defect_type:
             X = systemX_cutout_Y_artifacts[composition]
             
 
-            folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
+            folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped-centered-ext"
             if type == "shallow":
                 compiled_defect_counts = systems_dict_avg_defect_shallow_per_grid[composition]
             if type == "deep":
@@ -407,7 +447,7 @@ for type in defect_type:
             ax[idx].set_ylabel("Y (nm)")
             ax[idx].set_aspect('equal', adjustable='box') 
             ax[idx].set_title(composition, fontsize=16)
-    plt.savefig(f"{type}-compiled-defects-averaged-frames-heatmap-{configuration}.pdf")
+    plt.savefig(f"{compiled_data}/{type}-compiled-defects-averaged-frames-heatmap-{configuration}-{lipid_type}.pdf")
     plt.close()
 
 
@@ -421,7 +461,7 @@ for type in defect_type:
 # system_defect_sizes = {}
 # with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
 #     fig,ax = ph.fixed_size_subplots(1, 1, subwidth=4, subheight=3)
-#     for composition, position in lipid_compositions.items():
+#     for composition, position in lipid_compositionsf.items():
 #         folder_system = analysis_defect_path / f"{composition}-{configuration}-production-stripped_centered"
 #         defect_counts = np.load(folder_system/"output-defects-upper.npy")
 
