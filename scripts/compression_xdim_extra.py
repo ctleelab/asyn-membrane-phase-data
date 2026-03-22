@@ -9,7 +9,7 @@ script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent /"mdps") 
 
 size = "large"
-systems = [1,2,3]
+systems = [4,5,6]
 #dimensions = {'xsmall': "1 1 1", 'small': "2 1 1", 'medium': "3 1 1", 'large': "4 1 1"}
 compression_3bar = [1,3,6]
 compression_35bar = [2,5]
@@ -53,7 +53,7 @@ for sys in systems:
     subprocess.run(grompp_cmd, shell=True, check=True)
 
     # run compression
-    mdrun_cmd = f"gmx mdrun -nt 32 -bonded gpu -gpu_id 1 -pin on  -v -pinstride 1 -nstlist 100 -deffnm {base_name}"
+    mdrun_cmd = f"gmx mdrun -nt 32 -bonded gpu -gpu_id 0 -pin on -pinoffset 24 -v -pinstride 1 -nstlist 100 -deffnm {base_name}"
     subprocess.run(mdrun_cmd, shell=True, check=True)
 
 
