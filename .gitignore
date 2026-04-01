@@ -21,5 +21,6 @@ analysis/
 old_systems/
 scripts/old-scripts
 Figures/
-simulations/
+simulations-v2/
+simulations-v1/
 compression-data/
