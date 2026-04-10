@@ -1,4 +1,3 @@
-#script not set up to only do one dimension type 
 #import libraries
 from pathlib import Path
 from util import base_path
@@ -13,6 +12,20 @@ import MDAnalysis as mda
 
 
 def avg_box_size(sys,size):
+    '''
+    Determines the average box size in the x dimension. 
+    Plots the box size over time.
+    Then extracts the frame closest to the average box size and saves it as a .gro file. 
+
+    Args
+    sys: int, the system number to analyze
+    size: str, the size of the system being analyzed.
+
+    Returns
+
+
+    '''
+
     #file set-up
     system_folder = f"system{sys}-8x8x25"
     system_path = base_path/system_folder
@@ -37,7 +50,7 @@ def avg_box_size(sys,size):
     actual_xdim = df["Box-X"].iloc[target_xdim_idx]
 
 
-    #create a plot
+    #creates a plot of Lx over time 
     plt.plot(terms["Time"],terms["Box-X"])
     plt.xlabel('Time')
     plt.ylabel('dimension (A)')
@@ -47,8 +60,7 @@ def avg_box_size(sys,size):
     plt.savefig(equilibration_path / f"{size}-x-box-dimension-sys{sys}-equil6.9-ext.png")
     plt.close()
 
-
-    #create a plot
+    #creates a plot of Lx over time 
     plt.plot(terms["Time"],terms["Box-Z"])
     plt.xlabel('Time')
     plt.ylabel('dimension (A)')
@@ -59,10 +71,22 @@ def avg_box_size(sys,size):
     plt.close()
 
 
-    #extract gro frame closest to avg box size
+    #extract gro frame closest to avg Lx box size
     output_file = f"system{sys}-{size}-flat-extractedgro-{time_at_target_box_size}ps"
     file_name = f"equilibration6.9-ext"
+    output_path = Path(f"{equilibration_path}/{output_file}.gro")
+    if not output_path.exists():
+        frame_trr = (
+            f"echo '0' | gmx trjconv "
+            f"-f {equilibration_path}/{file_name}.xtc "
+            f"-s {equilibration_path}/{file_name}.tpr "
+            f"-o {output_path} "
+            f"-dump {time_at_target_box_size}"
+        )
+        subprocess.run(frame_trr, shell=True, check=True)
+    else:
+        print(f"File already exists: {output_path}")
     frame_trr = f"echo '0'| gmx trjconv -f {equilibration_path}/{file_name}.xtc -s {equilibration_path}/{file_name}.tpr -o {equilibration_path}/{output_file}.gro -dump {time_at_target_box_size}"
-    subprocess.run(frame_trr, shell = True, check = True)
 
     return time_at_target_box_size
+
