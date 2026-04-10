@@ -7,13 +7,13 @@ from box_size import avg_box_size
 #setting paths
 script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent /"mdps") 
-
 size = "large"
-systems = [1,2,3]
+systems = [1,2,3,4,5,6]
 #dimensions = {'xsmall': "1 1 1", 'small': "2 1 1", 'medium': "3 1 1", 'large': "4 1 1"}
 compression_3bar = [1,3,6]
-compression_35bar = [2,5]
-compression_50bar = [4]
+compression_30bar = [5]
+compression_35bar = [2]
+compression_38bar = [4]
 
 
 dimensions = {'large': "4 1 1"}
@@ -33,15 +33,19 @@ for sys in systems:
     #picks the correct compression .mdp based on system composition
     if sys in compression_3bar:
         compression_mdp = mdp_path / "step6.8.1_compression.mdp"
-        compression_folder = system_path /"compression"/"xzPcoupled-3bar-compression-1000ns"
+        compression_folder = system_path /"compression"/"xzPcoupled-3bar-compression-500ns-20psreadout"
+        compression_folder.mkdir(exist_ok=True)
+    if sys in compression_30bar:
+        compression_mdp = mdp_path / "step6.8.4_compression.mdp"
+        compression_folder = system_path /"compression"/"xzPcoupled-30bar-compression-1000ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
     if sys in compression_35bar: 
         compression_mdp = mdp_path / "step6.8.2_compression.mdp"
-        compression_folder = system_path /"compression"/"xzPcoupled-35bar-compression-1000ns"
+        compression_folder = system_path /"compression"/"xzPcoupled-35bar-compression-500ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
-    if sys in compression_50bar:
+    if sys in compression_38bar:
         compression_mdp = mdp_path / "step6.8.3_compression.mdp"
-        compression_folder = system_path /"compression"/"xzPcoupled-50bar-compression-1000ns"
+        compression_folder = system_path /"compression"/"xzPcoupled-38bar-compression-500ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
 
     # base filename for .tpr and .deffnm
@@ -53,7 +57,7 @@ for sys in systems:
     subprocess.run(grompp_cmd, shell=True, check=True)
 
     # run compression
-    mdrun_cmd = f"gmx mdrun -nt 32 -bonded gpu -gpu_id 1 -pin on  -v -pinstride 1 -nstlist 100 -deffnm {base_name}"
+    mdrun_cmd = f"gmx mdrun -nt 24 -bonded gpu -gpu_id 1 -pin on -pinoffset 0 -v -pinstride 1 -nstlist 100 -deffnm {base_name}"
     subprocess.run(mdrun_cmd, shell=True, check=True)
 
 
