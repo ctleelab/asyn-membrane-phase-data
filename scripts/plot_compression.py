@@ -1,4 +1,3 @@
-# script not set up to only do one dimension type
 # import libraries
 from pathlib import Path
 import pandas as pd
@@ -21,6 +20,12 @@ compression_38bar = [4]
 
 
 def compression_plot_set_Lo(system):
+    '''
+
+    Args
+
+    Returns
+    '''
     # first grab the length of Lo which is the start of the compression
     compression_folder = Path(
         f"/scratch/local/casakurai/asyn-phase-binding-data/systems/system{system}-8x8x25/compression/"
@@ -110,6 +115,9 @@ def compression_plot_strain(
     plt.close()
 
 
+
+
+####execute of script 
 for system in systems:
     compression_data, compression_at_target_strain, time_at_target_strain, folder = ( 
         compression_plot_set_Lo(system)
