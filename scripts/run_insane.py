@@ -26,7 +26,7 @@ script_dir = Path(__file__).resolve().parent
 martini_itp_dir = script_dir.parent / "martini3-files"
 
 # #stating completed systems
-completed_systems = [1,2]
+completed_systems = [1,2,3,4,5,6]
 
 #items because system compositions are a dictionary
 for sims, compositions in util.system_compositions.items():

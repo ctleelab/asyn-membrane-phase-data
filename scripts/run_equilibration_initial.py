@@ -14,18 +14,18 @@ script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent /"mdps") 
 
 
-systems = [1,2]
+systems = [1,2,3,4,5,6]
 
 for sys in systems:
-    system_folder = f"system{sys}-10x10x20"
+    system_folder = f"system{sys}-8x8x25"
     system_path = base_path / system_folder
         
     #create folder and path for equilibration
-    equilibration_folder = system_path / f"equil"
+    equilibration_folder = system_path / f"equil-xsmall"
     equilibration_folder.mkdir(exist_ok = True)
     equilibration_path = system_path / equilibration_folder
     equilibration_number = 6.2
-    gro = system_path/ f"minimization6.1.gro"
+    gro = system_path/ "min-xsmall/minimization6.1.gro"
 
     while equilibration_number <= 6.7:
         # Define files 
