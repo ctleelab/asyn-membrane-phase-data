@@ -1,4 +1,6 @@
 ;no force imposed on lipid bilayer
+;1us of equilibration 
+;equilibration extension for tesselellated membranes
 integrator               = md
 tinit                    = 0.0
 dt                       = 0.020
