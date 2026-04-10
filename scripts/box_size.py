@@ -22,7 +22,8 @@ def avg_box_size(sys,size):
     size: str, the size of the system being analyzed.
 
     Returns
-
+    Extract gro frame closest to avg Lx box size
+    Plot of box size over time in Lx and Lz
 
     '''
 
