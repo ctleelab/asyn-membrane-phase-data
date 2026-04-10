@@ -12,14 +12,14 @@ script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent /"mdps") 
 
 #systems 
-systems = [1,2]
+systems = [1,2,3,4,5,6]
 
 
 for sys in systems: 
     # Reset the minimization number, needs to start at 6.0 for each system
     minimization_number = 6.0 
     # Define system folder and path    
-    system_folder = f"system{sys}-10x10x20"
+    system_folder = f"system{sys}-8x8x25/min-xsmall"
     system_path = base_path / system_folder
     
     # Define files 
@@ -35,7 +35,7 @@ for sys in systems:
         subprocess.run(minimize1_tpr, shell=True, check=True)
 
         # Run mdrun for the first minimization step
-        minimize1_run = f"gmx mdrun -deffnm {output_file_min1} -v -nt 64 -rdd 1.5"
+        minimize1_run = f"gmx mdrun -deffnm {output_file_min1} -v -nt 64 -rdd 1.5 -pinstride 2"
         subprocess.run(minimize1_run, shell=True, check=True)
 
         # Run the second minimization step if there is no error
@@ -50,7 +50,7 @@ for sys in systems:
         subprocess.run(minimize2_tpr, shell=True, check=True)
 
         # Run mdrun for the second minimization step
-        minimize2_run = f"gmx mdrun -deffnm {output_file_min2} -v -nt 64"
+        minimize2_run = f"gmx mdrun -deffnm {output_file_min2} -v -nt 64 -rdd 1.5 -pinstride 2"
         subprocess.run(minimize2_run, shell=True, check=True)
 
     except subprocess.CalledProcessError as e:
