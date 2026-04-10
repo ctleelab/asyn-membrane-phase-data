@@ -32,19 +32,19 @@ for sys in systems:
     
     #picks the correct compression .mdp based on system composition
     if sys in compression_3bar:
-        compression_mdp = mdp_path / "step6.8.1_compression.mdp"
+        compression_mdp = mdp_path / "step6.9.1_compression.mdp"
         compression_folder = system_path /"compression"/"xzPcoupled-3bar-compression-500ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
     if sys in compression_30bar:
-        compression_mdp = mdp_path / "step6.8.4_compression.mdp"
+        compression_mdp = mdp_path / "step6.9.4_compression.mdp"
         compression_folder = system_path /"compression"/"xzPcoupled-30bar-compression-1000ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
     if sys in compression_35bar: 
-        compression_mdp = mdp_path / "step6.8.2_compression.mdp"
+        compression_mdp = mdp_path / "step6.9.2_compression.mdp"
         compression_folder = system_path /"compression"/"xzPcoupled-35bar-compression-500ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
     if sys in compression_38bar:
-        compression_mdp = mdp_path / "step6.8.3_compression.mdp"
+        compression_mdp = mdp_path / "step6.9.3_compression.mdp"
         compression_folder = system_path /"compression"/"xzPcoupled-38bar-compression-500ns-20psreadout"
         compression_folder.mkdir(exist_ok=True)
 
