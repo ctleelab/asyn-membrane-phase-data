@@ -21,10 +21,17 @@ compression_38bar = [4]
 
 def compression_plot_set_Lo(system):
     '''
+    Determine the time at which the compression strain is closest to the target strain.
 
     Args
+    system: int, the system number to analyze
 
     Returns
+    df: pandas dataframe with columns Time_1e6, Time, Box-X, Compression strain
+    compression_at_target_strain: float, the actual compression strain at the target strain
+    time_at_target_strain: float, the time at which the the strain is the closest to the target strain
+    specific_compression_folder: Path, the path to the specific compression folder for the system
+
     '''
     # first grab the length of Lo which is the start of the compression
     compression_folder = Path(
@@ -91,6 +98,22 @@ def compression_plot_set_Lo(system):
 def compression_plot_strain(
     compression_data, system, value_idx_at_targert_strain_new, time_at_target_strain_new, folder
 ):
+    '''
+    Plots the compression strain over time. 
+
+    Args
+    compression_data: pandas dataframe with columns Time_1e6, Time, Box-X, Compression strain
+    system: int, the system number to analyze
+    value_idx_at_targert_strain_new: float, the actual compression strain at the target strain
+    time_at_target_strain_new: float, the time at which the the strain is the closest to the target strain
+    folder: Path, the path to the specific compression folder
+
+
+    Returns
+    A plot the compression strain over time and save the figure. 
+    The title of the plot has the target strain, the time at which the strain is closest to the target strain, and the actual strain at that time. 
+    
+    '''
     # combined plot time vs compression
     plt.plot(compression_data["Time_1e6"], compression_data["Compression strain"])
     plt.xlabel("time (ps)")
