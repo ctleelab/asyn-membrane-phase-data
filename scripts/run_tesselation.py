@@ -90,21 +90,13 @@ for sys in systems:
         DOPS_count = len(unique_DOPS)
         DPPS_count = len(unique_DPPS)
 
-        # #covert to counts per ion or lipid type
-        # lipid_counts = {lip: len(resids) for lip, resids in lipid_residues.items()}
-        
-        # W = ion_counts["W"]
-        # NA = ion_counts["NA"]
-        # CL = ion_counts["CL"]
-                    
-
-        #write the updated counts to the .top file
-        #but write in a format that matches the .gro file
+        #Create a new top file to match the tesselated system
+        #Write in a format that matches the .gro file
         with open(tessilation_top, 'r') as top_file:
             lines = top_file.readlines()
             unchanged_lines = lines[:9]
         with open(tessilation_top, 'w') as top_file:
-            
+
             if size == 'large':
                 tessellations = 4
                 seperated_DOPC = (DOPC_count/tessellations)/2 #divide by two because two leaflets
