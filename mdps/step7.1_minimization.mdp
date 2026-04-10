@@ -1,4 +1,4 @@
-;after initial compression of system
+;after .gro frame extraction of the system NVT ensemble
 ;define                   = -DFLEXIBLE
 integrator               = steep
 tinit                    = 0.0

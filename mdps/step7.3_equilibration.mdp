@@ -1,3 +1,4 @@
+;after .gro frame extraction of the system NVT ensemble
 ;define                   = -DBILAYER_LIPIDHEAD_FC=100 ;-DPOSRES -DPOSRES_FC=100
 integrator               = md
 tinit                    = 0.0
