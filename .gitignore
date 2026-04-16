@@ -1,7 +1,6 @@
 to-delete/
-system1/
 __pycache__/
-systems/
+systems_NPT/
 mdout.mdp
 martini3-files
 analysis/
@@ -18,10 +17,8 @@ analysis/
 *.log
 *.pdf
 .ipynb_checkpoints
-old_systems/
 scripts/old-scripts
 Figures/
 simulations-v2/
 simulations-v1/
 compression-data/
-simulations-v2/
