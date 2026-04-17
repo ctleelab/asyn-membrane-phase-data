@@ -1,6 +1,7 @@
 to-delete/
 __pycache__/
 systems_NPT/
+systems_NVT/
 mdout.mdp
 martini3-files
 analysis/
