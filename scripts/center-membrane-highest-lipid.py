@@ -4,7 +4,7 @@ import numpy as np
 from util import analysis_path
 
 shape = "buckled"
-strain = "0.2strain"
+strain = "strain.2"
 
 
 #inputs
@@ -112,8 +112,8 @@ def centered_membrane(gro,xtc):
 
 
 for system, lipid in systems.items(): 
-    file_gro_path = analysis_path/"curvature_selection"/"NVT"/shape/f"system{system}-8x8x25-{lipid}-{strain}-NVT"/"prod"
-    input_file_xtc = file_gro_path /"production7.8_stripped.xtc"
-    input_file_gro = file_gro_path /"production7.8_stripped.gro"
-    output_file_name = file_gro_path / "production7.8_stripped_centered"
+    file_gro_path = analysis_path/strain/f"system{system}"/f"prod"
+    input_file_xtc = file_gro_path /"production7.9_stripped.xtc"
+    input_file_gro = file_gro_path /"production7.9_stripped.gro"
+    output_file_name = file_gro_path /f"{lipid}-{strain}-production7.9-stripped-centered"
     centered_membrane(input_file_gro, input_file_xtc)
