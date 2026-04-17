@@ -14,7 +14,7 @@ size = "large"
 script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent / "mdps")
 system_path = Path(script_dir.parent / "systems")
-NVT_simulation_path = Path(script_dir.parent / "simulations-v2")
+NVT_simulation_path = Path(script_dir.parent /"systems_NVT"/"simulations-v2")
 
 
 for system in systems:

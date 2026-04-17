@@ -22,7 +22,7 @@ compression_38bar = [4]
 script_dir = Path(__file__).resolve().parent
 mdp_path = Path(script_dir.parent / "mdps")
 system_path = Path(script_dir.parent / "systems")
-NVT_simulation_path = Path(script_dir.parent / "simulations-v2")
+NVT_simulation_path = Path(script_dir.parent / "systems_NVT"/"simulations-v2")
 
 for sys in systems:
     system_folder = f"{system_path}/system{sys}-{initial_dim}"
