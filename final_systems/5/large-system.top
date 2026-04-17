@@ -1,0 +1,37 @@
+#include "/scratch/local/casakurai/asyn-phase-binding-data/martini3-files/martini.itp"
+
+[ system ]
+; name
+INSANE! Membrane UpperLeaflet>M3.DPPC:M3.DPPA=75.0:25.0 LowerLeaflet>M3.DPPC:M3.DPPA=75.0:25.0
+
+
+[ molecules ]
+; name  number
+DPPC 75.0
+DPPA 25.0
+DPPC 75.0
+DPPA 25.0
+W 11543
+NA 195
+CL 145
+DPPC 75.0
+DPPA 25.0
+DPPC 75.0
+DPPA 25.0
+W 11543
+NA 195
+CL 145
+DPPC 75.0
+DPPA 25.0
+DPPC 75.0
+DPPA 25.0
+W 11543
+NA 195
+CL 145
+DPPC 75.0
+DPPA 25.0
+DPPC 75.0
+DPPA 25.0
+W 11543
+NA 195
+CL 145
