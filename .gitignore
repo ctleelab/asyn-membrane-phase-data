@@ -10,7 +10,6 @@ analysis/
 *.edr
 *.log
 *.tpr
-*.gro
 *.cpt
 *.xvg
 *.png
@@ -22,3 +21,4 @@ Figures/
 simulations-v2/
 simulations-v1/
 compression-data/
+VMD/
