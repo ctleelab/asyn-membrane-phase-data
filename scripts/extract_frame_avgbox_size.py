@@ -73,7 +73,7 @@ def avg_box_size(sys,size):
 
 
     #extract gro frame closest to avg Lx box size
-    output_file = f"system{sys}-{size}-flat-extractedgro-{time_at_target_box_size}ps"
+    output_file = f"system{sys}-{size}-avg-flat-extractedgro"
     file_name = f"equilibration6.9-ext"
     output_path = Path(f"{equilibration_path}/{output_file}.gro")
     if not output_path.exists():
