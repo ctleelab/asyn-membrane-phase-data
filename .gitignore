@@ -23,3 +23,5 @@ Figures/
 simulations/
 suv-analysis/*.csv
 compression-data/
+systems_NPT/
+systems_NVT/
