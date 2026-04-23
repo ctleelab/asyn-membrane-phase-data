@@ -10,7 +10,6 @@ import pandas as pd
 
 
 configurations = ["flat","strain.2"]
-#configurations = ["strain.2"]
 defect_cut_off = 6.3
 time = "100ps-1800ext"
 cutoff = 15 
@@ -21,8 +20,7 @@ cut_off = "15A"
 
 #hardcoded paths
 compiled_data = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{defect_cut_off}A")
-#compiled_data_reshaped = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{defect_cut_off}A/reshaped")
-compiled_data_reshaped = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/trials")
+compiled_data_reshaped = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{defect_cut_off}A/reshaped")
 compiled_data.mkdir(exist_ok=True)
 compiled_data_reshaped.mkdir(exist_ok=True)
 
