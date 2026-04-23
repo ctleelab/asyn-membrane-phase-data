@@ -1,16 +1,12 @@
 
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
 import MDAnalysis as mda
 import numpy as np
 from pathlib import Path
 import ctleelab_plothelper.plothelpers as ph
 from scipy import ndimage as scipy_ndimage
-from math import log
-from collections import Counter
 import pandas as pd
-from scipy.stats import linregress 
 
 
 configurations = ["flat","strain.2"]
@@ -41,8 +37,6 @@ lipid_compositions = {
 
 
 lipid_comp = list(lipid_compositions.keys())
-
-
 
 
 
