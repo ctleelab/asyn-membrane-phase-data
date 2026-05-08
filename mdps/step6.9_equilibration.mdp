@@ -1,9 +1,10 @@
-define                   = -DBILAYER_LIPIDHEAD_FC=20 ;-DPOSRES_Z -DPOSRES_FC_Z=20
+;no force imposed on lipid bilayer
+;2us of equilibration 
+;equilibration extension for tesselellated membranes
 integrator               = md
 tinit                    = 0.0
 dt                       = 0.020
-nsteps                   = 2500000 ;500ns
-
+nsteps                   = 100000000 ;total time 2us
 nstlog                   = 1000 
 nstenergy                = 1000
 nstxout-compressed       = 1000

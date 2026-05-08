@@ -1,0 +1,25 @@
+#include "/scratch/local/casakurai/asyn-phase-binding-data/martini3-files/martini.itp"
+
+[ system ]
+; name
+INSANE! Membrane UpperLeaflet>DPPC=100.0 LowerLeaflet>DPPC=100.0
+
+
+[ molecules ]
+; name  number
+DPPC 200
+W 11508
+NA 145
+CL 145
+DPPC 200
+W 11508
+NA 145
+CL 145
+DPPC 200
+W 11508
+NA 145
+CL 145
+DPPC 200
+W 11508
+NA 145
+CL 145

@@ -1,9 +1,9 @@
 to-delete/
-system1/
 __pycache__/
-systems/
+systems_NPT/
+systems_NVT/
 mdout.mdp
-martini3-files/
+martini3-files
 analysis/
 analysis/
 *.xtc
@@ -11,12 +11,15 @@ analysis/
 *.edr
 *.log
 *.tpr
-*.gro
 *.cpt
 *.xvg
 *.png
 *.log
 *.pdf
-# pixi environments
-.pixi/*
-!.pixi/config.toml
+.ipynb_checkpoints
+scripts/old-scripts
+Figures/
+simulations-v2/
+simulations-v1/
+compression-data/
+VMD/
