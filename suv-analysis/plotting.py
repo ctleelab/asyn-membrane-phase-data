@@ -9,6 +9,8 @@ import matplotlib.cm as cm
 from matplotlib.colors import TwoSlopeNorm
 
 import pdb
+import csv
+from scipy import stats
 
 
 lipids = ["DOPC", "DPPC", "DOPC_adjusted", "DPPC_adjusted", "DPPC_DPPS", "DOPC_DOPS"]
@@ -152,9 +154,10 @@ def plot_curve(df, i, lipid, format="png"):
 
         return 4 * np.pi * area / (perimeter**2)
 
+        delta_ideal_curvature = curvature - ideal_curvature
 
 for lipid in lipids:
-    df = pd.read_csv(f"{lipid}.csv")
+    df = pd.read_csv(f"traces_{lipid}.csv")
     for i in range(1, 6):
         polsby_popper_score = plot_curve(df, i, lipid)
         print(polsby_popper_score)

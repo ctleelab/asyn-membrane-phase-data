@@ -5,8 +5,6 @@ systems_NVT/
 mdout.mdp
 martini3-files
 analysis/
-analysis/
-*.xtc
 *.trr
 *.edr
 *.log
@@ -16,10 +14,16 @@ analysis/
 *.png
 *.log
 *.pdf
-.ipynb_checkpoints
-scripts/old-scripts
+*.xtc
+# pixi environments
+.pixi/*
+!.pixi/config.toml
 Figures/
-simulations-v2/
 simulations-v1/
+simulations-v2/
+suv-analysis/*.csv
 compression-data/
+systems_NPT/
+systems_NVT/
 VMD/
+misc_scripts/
