@@ -267,7 +267,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zlib-1.3.1-hb9d3cd8_2.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zlib-ng-2.3.2-hceb46e0_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_6.conda
-      - pypi: git+https://github.com/ctleelab/ctleelab-mpl-utilities.git#5fa776b928c5d57d6a8284781992724c1b4bdf20
+      - pypi: git+https://github.com/ctleelab/ctleelab-mpl-utilities.git?branch=development#5fa776b928c5d57d6a8284781992724c1b4bdf20
       osx-arm64:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/_openmp_mutex-4.5-7_kmp_llvm.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/_python_abi3_support-1.0-hd8ed1ab_2.conda
@@ -475,7 +475,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-1.3.1-h8359307_2.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.2-hed4e4f5_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hbf9d68e_6.conda
-      - pypi: git+https://github.com/ctleelab/ctleelab-mpl-utilities.git#5fa776b928c5d57d6a8284781992724c1b4bdf20
+      - pypi: git+https://github.com/ctleelab/ctleelab-mpl-utilities.git?branch=development#5fa776b928c5d57d6a8284781992724c1b4bdf20
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -972,7 +972,7 @@ packages:
   purls: []
   size: 49298
   timestamp: 1765020324943
-- pypi: git+https://github.com/ctleelab/ctleelab-mpl-utilities.git#5fa776b928c5d57d6a8284781992724c1b4bdf20
+- pypi: git+https://github.com/ctleelab/ctleelab-mpl-utilities.git?branch=development#5fa776b928c5d57d6a8284781992724c1b4bdf20
   name: ctleelab-plothelper
   version: 0.1.dev10+g5fa776b92
   requires_dist:

@@ -8,7 +8,7 @@ import matplotlib.colors as mcolors
 import defect_coverage as dc
 import pandas as pd
 
-configurations = ["flat","strain2"]
+configurations = ["flat", "strain.2"]
 packMem_cutoff = 6.3
 restriction = 200
 defect_size_cut_off = 15
@@ -26,6 +26,68 @@ lipid_compositions = {
 
 lipid_comp = list(lipid_compositions.keys())
 
+#determine min and max values of X and Y 
+X_min = []
+X_max = []
+Y_min = []
+Y_max = []
+
+for configuration in configurations:
+    analysis_path = Path(
+        "/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-100ps-1800ext-equil-ext"
+    )
+
+
+    analysis_defect_path = analysis_path / f"defect-cut-off-{packMem_cutoff}A"
+    configuration_data = Path(
+        f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/{configuration}/defect-cut-off-{packMem_cutoff}A/defect-maps"
+    )
+    configuration_data.mkdir(exist_ok=True)
+
+    compiled_data = Path(
+        f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{packMem_cutoff}A/defect-maps"
+    )
+    compiled_data.mkdir(exist_ok=True)
+
+    for composition in lipid_comp:
+
+        #load the defect data per system
+        if configuration == "flat":
+            folder_system = (
+                analysis_path
+                / f"defect-cut-off-{packMem_cutoff}A/{composition}-{configuration}-production-stripped-ext1800-cutoff"
+            )
+        if configuration == "strain.2":
+            folder_system = (
+                analysis_path
+                / f"defect-cut-off-{packMem_cutoff}A/{composition}-{configuration}-production-stripped-centered-ext1800-cutoff"
+            )
+
+        # load data
+        defect_counts = np.load(folder_system / "output-defects-upper.npy")
+
+
+        shape = np.load(folder_system / "output-shape.npy")
+        X = (np.load(folder_system / "output-Xshape.npy")) / 10
+        Y = (np.load(folder_system / "output-Yshape.npy")) / 10
+
+        # center X so midpoint is at 0
+        X_center = (X.max() + X.min()) / 2
+        X = X - X_center
+        X_min.append(X.min())
+        X_max.append(X.max())
+        Y_min.append(Y.min())
+        Y_max.append(Y.max())
+
+Xmin = min(X_min)
+Xmax = max(X_max)
+Ymin = min(Y_min)
+Ymax = max(Y_max)
+
+
+
+
+
 figures_data = {}
 
 # create defect map plots
@@ -34,30 +96,30 @@ with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]
     for configuration in configurations:
         # hardcoded paths
         analysis_path = Path(
-            "/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-100ps-1800ext"
+            "/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-100ps-1800ext-equil-ext"
         )
 
 
         analysis_defect_path = analysis_path / f"defect-cut-off-{packMem_cutoff}A"
         configuration_data = Path(
-            f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext/{configuration}/defect-cut-off-{packMem_cutoff}A/defect-maps"
+            f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/{configuration}/defect-cut-off-{packMem_cutoff}A/defect-maps"
         )
         configuration_data.mkdir(exist_ok=True)
 
         compiled_data = Path(
-            f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext/compiled/defect-cut-off-{packMem_cutoff}A/defect-maps"
+            f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{packMem_cutoff}A/defect-maps"
         )
         compiled_data.mkdir(exist_ok=True)
 
         for composition in lipid_comp:
-            
+
             #load the defect data per system
             if configuration == "flat":
                 folder_system = (
                     analysis_path
                     / f"defect-cut-off-{packMem_cutoff}A/{composition}-{configuration}-production-stripped-ext1800-cutoff"
                 )
-            if configuration == "strain2":
+            if configuration == "strain.2":
                 folder_system = (
                     analysis_path
                     / f"defect-cut-off-{packMem_cutoff}A/{composition}-{configuration}-production-stripped-centered-ext1800-cutoff"
@@ -138,13 +200,13 @@ with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]
             )
 
             # formatting
-            ax_array.set_aspect("equal", adjustable="datalim")
+            #ax_array.set_aspect("equal", adjustable="datalim")
             ax_array.xaxis.set_major_locator(MultipleLocator(5))
             ax_array.xaxis.set_minor_locator(MultipleLocator(2.5))
             ax_array.set_xlabel("X (nm)")
             ax_array.set_ylabel("Y (nm)")
-            ax_array.set_xlim(X.min(), X.max())
-            ax_array.set_ylim(Y.min(), Y.max())
+            ax_array.set_xlim(Xmin, Xmax)
+            ax_array.set_ylim(Ymin, Ymax)
             ax_array.set_aspect("equal", adjustable="box")
             ax_array.set_title(composition, fontsize=16)  # just use ax, not ax[i,j]
 
@@ -160,7 +222,7 @@ with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]
             plt.close(fig)
 
 
-
+            print("system:", composition, configuration)
             print("max-frame:", max_frames_avg_defect_coverage_per_system)
             print("average defect coverage:", avg_percent_coverage_defects[0])
             MD_frame = max_frames_avg_defect_coverage_per_system*PackMem_frame_interval

@@ -20,8 +20,11 @@ martini3-files
 .pixi/*
 !.pixi/config.toml
 Figures/
-simulations/
+simulations-v1/
+simulations-v2/
 suv-analysis/*.csv
 compression-data/
 systems_NPT/
 systems_NVT/
+VMD/
+misc_scripts/

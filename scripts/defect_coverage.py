@@ -85,15 +85,15 @@ def surface_coverage_defects_cutoff(
     # pulls the necessary data
     if configuration == "flat":
         time = "100ps-1800ext"
-        analysis_path = f"/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-{time}"
+        analysis_path = f"/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-{time}-equil-ext"
         analysis_defect_path = Path(f"{analysis_path}/defect-cut-off-{defect_cut_off}A")
         folder_system = (
             analysis_defect_path
             / f"{composition}-{configuration}-production-stripped-ext1800-cutoff"
         )
-    if configuration == "strain2":
+    if configuration == "strain.2":
         time = "100ps-1800ext"
-        analysis_path = f"/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-{time}"
+        analysis_path = f"/scratch/local/casakurai/asyn-phase-binding-data/analysis/defect-data-{time}-equil-ext"
         analysis_defect_path = Path(f"{analysis_path}/defect-cut-off-{defect_cut_off}A")
         folder_system = (
             analysis_defect_path

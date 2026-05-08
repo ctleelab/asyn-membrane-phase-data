@@ -7,20 +7,32 @@ from pathlib import Path
 import ctleelab_plothelper.plothelpers as ph
 from scipy import ndimage as scipy_ndimage
 import pandas as pd
+import defect_coverage as dc
 
 
+
+#This code does the following:
+#1) Creates a bar graph for the average size of the defects in a particular region of the membrane in the x-dimension.
+#2) Creates a bar graph for the average defect coverage in a particular region of the membrane in the x-dimension.
+#3) Plots the probability of finding a defect of a certain size
+#4) Plots the percent defect coverage for each frame for a given configuration and restriction, to look at convergence of defect coverage over time.
+
+#information for folders
 configurations = ["flat","strain.2"]
 defect_cut_off = 6.3
 time = "100ps-1800ext"
 cutoff = 15 
 defect_type = ["deep", "shallow", "all"]
-restrictions = [25]
 lipid_type = "all-systems"
-cut_off = "15A" 
+
+#alterable parameters for analysis
+restrictions = [25] #region in x-dimension to analyze, centered at 0, so 25 means -25 to 25
+cut_off = "15A" #defect size cutoff 
 
 #hardcoded paths
 compiled_data = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{defect_cut_off}A")
-compiled_data_reshaped = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{defect_cut_off}A/reshaped")
+#compiled_data_reshaped = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/defect-data-100ps-1800ext-equil-ext/compiled/defect-cut-off-{defect_cut_off}A/reshaped")
+compiled_data_reshaped = Path(f"/scratch/local/casakurai/asyn-phase-binding-data/Figures/trials")
 compiled_data.mkdir(exist_ok=True)
 compiled_data_reshaped.mkdir(exist_ok=True)
 
@@ -468,6 +480,8 @@ defect_coverage_simulation(defect_restricted_per_frame_system,restrictions,confi
 
 
 
+
+
 #################################################################
 ###plot the probability of finding a defect of a certain size### 
 ##################################################################
@@ -551,3 +565,63 @@ for composition, position in lipid_compositions.items():
         
         system_defect_sizes_log_transformed_prob[composition] = strain_defect_sizes_log_transformed_prob
 
+#######################################################
+##execution code for bar graphs for defect coverage ###
+#######################################################
+
+for configuration in configurations:
+    with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
+        fig, ax = ph.fixed_size_subplots(1, 1, subwidth=1.3, subheight=1.4) #small graphs DOPC vs DPPC
+        #fig, ax = ph.fixed_size_subplots(1, 1, subwidth=2.2, subheight=1.5) #large graphs +PA, PS, pure
+        #colors_presets = [ "#ff6c0A","#8ece33", "#9A36D8"] #large graphs +PA, PS, pure
+        #colors_presets = [ "#0072b2","#009e73"] #large graphs +PA, PS, pure
+        i = 0
+        for composition in lipid_comp:
+            #color = colors_presets[i]
+            areas_nonzero = system_defect_sizes_log_transformed_prob[composition][configuration][0]
+            log_probabilities = system_defect_sizes_log_transformed_prob[composition][configuration][1]
+            # scatter
+            ax.scatter(areas_nonzero ,log_probabilities , s=1, label = composition)
+            #i += 1
+
+        # # linear regression
+        # linear_regression = linregress(areas_nonzero, log_probabilities)
+
+        # slope = linear_regression.slope
+        # intercept = linear_regression.intercept
+        # r2_value = linear_regression.rvalue**2
+        # packdef_constant = abs(1 / slope)
+
+        # xfit = np.linspace(min(areas_nonzero), max(areas_nonzero), 100)
+        # yfit = slope * xfit + intercept
+
+        # ax.plot(xfit, yfit, color="black",
+        #         label=f"y={slope:.2f}x+{intercept:.2f}\n$R^2$={r2_value:.2f}\n defect-constant={packdef_constant:.2f}")
+
+        # axis formatting
+        ax.set_yticks(np.log(major_probs))
+        ax.set_yticklabels([
+            r"$10^{-1}$", r"$10^{-2}$", r"$10^{-3}$",
+            r"$10^{-4}$", r"$10^{-5}$", r"$10^{-6}$"
+        ])
+
+        ax.set_ylabel("Probability")
+        ax.set_xlabel("Defect Area (Å²)")
+        ax.set_ylim(np.log(5.e-5),-1)
+        ax.set_xlim(0,1100) #strain limit
+        #ax.set_xlim(0,300) #flat limit 
+        # ax.set_xlim(0,400) #strain limit DOPC
+
+
+        ax.set_title(f"{lipid_type} — {configuration}")
+        plt.legend()
+
+        plt.tight_layout()
+
+        plt.savefig(
+            f"{compiled_data_reshaped}/reshaped-{lipid_type}-{configuration}-defect-size-probability.png"
+        )
+        plt.savefig(
+            f"{compiled_data_reshaped}/reshaped-{lipid_type}-{configuration}-defect-size-probability.pdf"
+        )
+        plt.close()
