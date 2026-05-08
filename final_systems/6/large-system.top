@@ -1,0 +1,37 @@
+#include "/scratch/local/casakurai/asyn-phase-binding-data/martini3-files/martini.itp"
+
+[ system ]
+; name
+INSANE! Membrane UpperLeaflet>M3.DOPC:M3.DOPA=75.0:25.0 LowerLeaflet>M3.DOPC:M3.DOPA=75.0:25.0
+
+
+[ molecules ]
+; name  number
+DOPC 75.0
+DOPA 25.0
+DOPC 75.0
+DOPA 25.0
+W 11542
+NA 195
+CL 145
+DOPC 75.0
+DOPA 25.0
+DOPC 75.0
+DOPA 25.0
+W 11542
+NA 195
+CL 145
+DOPC 75.0
+DOPA 25.0
+DOPC 75.0
+DOPA 25.0
+W 11542
+NA 195
+CL 145
+DOPC 75.0
+DOPA 25.0
+DOPC 75.0
+DOPA 25.0
+W 11542
+NA 195
+CL 145

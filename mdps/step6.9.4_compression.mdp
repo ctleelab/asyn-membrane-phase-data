@@ -1,12 +1,12 @@
-define                   = -DBILAYER_LIPIDHEAD_FC=20 ;-DPOSRES_Z -DPOSRES_FC_Z=20
+;no force imposed on lipid bilayer
+;compression simulations for DPPC membrane + DPPA
 integrator               = md
 tinit                    = 0.0
 dt                       = 0.020
-nsteps                   = 2500000 ;500ns
-
-nstlog                   = 1000 
-nstenergy                = 1000
-nstxout-compressed       = 1000
+nsteps                   = 25000000 ;500ns
+nstlog                   = 1000;tells how often log file is written (previously 1000)
+nstenergy                = 1000 ;tells how often energy data is written
+nstxout-compressed       = 1000 ;tells how often coordinates are saved to the trj file (every 20ps)
 compressed-x-precision   = 100
 
 cutoff-scheme            = Verlet
@@ -28,10 +28,10 @@ ref_t                    = 285
 
 ; Pressure coupling:
 Pcoupl                   = berendsen
-Pcoupltype               = semiisotropic
-tau_p                    = 5.0
-compressibility          = 3e-4 3e-4
-ref_p                    = 1.0  1.0
+Pcoupltype               = anisotropic
+tau_p                    = 12
+compressibility          = 3e-4 0 3e-4  0 0 0 ; xx yy zz xy xz yz ;volume can change in xx and zz dimension
+ref_p                    = 30 1.0 1.0 0 0 0 ;change in pressure in the x-dimension
 
 ; GENERATE VELOCITIES FOR STARTUP RUN:
 gen_vel                  = no

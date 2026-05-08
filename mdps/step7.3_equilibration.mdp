@@ -1,10 +1,12 @@
-define                   = -DBILAYER_LIPIDHEAD_FC=20 ;-DPOSRES_Z -DPOSRES_FC_Z=20
+;after .gro frame extraction of the system NVT ensemble
+;define                   = -DBILAYER_LIPIDHEAD_FC=100 ;-DPOSRES -DPOSRES_FC=100
 integrator               = md
 tinit                    = 0.0
-dt                       = 0.020
-nsteps                   = 2500000 ;500ns
+dt                       = 0.005
+nsteps                   = 500000
 
-nstlog                   = 1000 
+
+nstlog                   = 1000
 nstenergy                = 1000
 nstxout-compressed       = 1000
 compressed-x-precision   = 100
@@ -27,11 +29,7 @@ tau_t                    = 1.0
 ref_t                    = 285
 
 ; Pressure coupling:
-Pcoupl                   = berendsen
-Pcoupltype               = semiisotropic
-tau_p                    = 5.0
-compressibility          = 3e-4 3e-4
-ref_p                    = 1.0  1.0
+Pcoupl                    = no
 
 ; GENERATE VELOCITIES FOR STARTUP RUN:
 gen_vel                  = no

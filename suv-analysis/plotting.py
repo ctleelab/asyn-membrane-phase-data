@@ -154,80 +154,11 @@ def plot_curve(df, i, lipid, format="png"):
 
         return 4 * np.pi * area / (perimeter**2)
 
-polsby_popper_score_SUVs = {}
-polsby_popper_score_SUVs_combined = {}
-adjusted = ["DOPC_adjusted", "DPPC_adjusted" ]
+        delta_ideal_curvature = curvature - ideal_curvature
 
 for lipid in lipids:
-    SUV_compositions = []
-    df = pd.read_csv(f"{lipid}.csv")
+    df = pd.read_csv(f"traces_{lipid}.csv")
     for i in range(1, 6):
         polsby_popper_score = plot_curve(df, i, lipid)
         print(polsby_popper_score)
-        polsby_popper_score_SUVs[f"{lipid}_curve{i}"] = polsby_popper_score
-        if polsby_popper_score is not None:
-            if lipid not in adjusted:
-                SUV_compositions.append(float(polsby_popper_score))
         print()
-    if lipid not in adjusted:
-        polsby_popper_score_SUVs_combined[f"{lipid}"] = SUV_compositions
-    
-
-        
-
-with open("polsby_popper_scores.csv", "w", newline = "") as f:
-    writer = csv.writer(f)
-    writer.writerow(["SUV", "polsby_popper_score"])
-    for k, v in polsby_popper_score_SUVs.items():
-        writer.writerow([k,v])
-
-#create a bar plot with error bars 
-#create an excel with average and std
-def plot_polsby_popper_scores(polsby_popper_score_SUVs_combined, format="png"):
-    polsby_popper_aggregate_scores = {}
-    compositions = []
-    averages = []
-    errors = []
-    SEM = []
-
-    #Convert the string lists into real Python lists of floats
-    for key, values in polsby_popper_score_SUVs_combined.items():
-        vals = np.array(values, dtype=float)
-        compositions.append(key)
-        average = (vals.mean())
-        averages.append(average)
-        error = vals.std(ddof=1) 
-        SEM = error / np.sqrt(len(vals))
-        n_values = len(vals) 
-        errors.append(error) #sample
-        polsby_popper_aggregate_scores[key] = [average, error, SEM,n_values ]
-        print(f"{key}-{averages}")
-
-
-    with plt.style.context(["ctleelab_plothelper.base", "ctleelab_plothelper.light"]):
-        fig, ax = ph.fixed_size_subplots(1, 1, subwidth=1.5, subheight=1.5)
-        ax.bar(compositions, averages, yerr=errors, capsize=5, color="skyblue")
-        ax.set_ylabel("Polsby-Popper ratio")
-        ax.set_title("Polsby-Popper Scores")
-        ax.set_xticklabels(compositions, rotation=45, ha="right")
-        fig.tight_layout()
-        fig.savefig(f"polsby_popper_scores.{format}")
-        plt.close(fig)
-
-    return polsby_popper_aggregate_scores
-
-
-
-polsby_popper_aggregate_scores = plot_polsby_popper_scores(polsby_popper_score_SUVs_combined)
-
-with open("polsby_popper_aggregate_scores.csv", "w", newline = "") as f:
-    writer = csv.writer(f)
-    writer.writerow(["SUV", "avg_polsby_popper_score", "std", "SEM", "n-values"])
-    for suv, stats in polsby_popper_aggregate_scores.items():
-        writer.writerow([
-            suv,
-            stats[0],
-            stats[1],
-            stats[2],
-            stats[3]
-        ])
