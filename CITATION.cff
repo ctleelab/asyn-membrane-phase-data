@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Membrane Phase, Charge, and Curvature Regulate α-Synuclein Binding Dynamics"
+type: software
+authors:
+  - family-names: Sakurai
+    given-names: Cailyn M.
+    orcid: https://orcid.org/0009-0005-1218-8658
+  - family-names: Lee
+    given-names: Christopher T.
+    orcid: https://orcid.org/0000-0002-0670-2308
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20073648
+    description: "Zenodo archive of this repository"
+  - type: doi
+    value: 10.1021/acs.langmuir.6c03110
+    description: "Associated manuscript (Langmuir 2026)"
+date-released: "2026-08-28"
+url: "https://github.com/ctleelab/asyn-membrane-phase-data"
+keywords:
+  - molecular dynamics
+  - membrane
+  - alpha-synuclein
+  - lipid bilayer
+  - coarse-grained
+  - Martini
+preferred-citation:
+  type: article
+  title: "Membrane Phase, Charge, and Curvature Regulate α-Synuclein Binding Dynamics"
+  authors:
+    - family-names: Kou
+      given-names: Orianna H.
+    - family-names: Sakurai
+      given-names: Cailyn M.
+    - family-names: Ramirez
+      given-names: Stephanie Y.
+    - family-names: Kim
+      given-names: Brian H.
+    - family-names: Johnson
+      given-names: David H.
+    - family-names: Zhang
+      given-names: Zixin
+    - family-names: Lee
+      given-names: Christopher T.
+    - family-names: Zeno
+      given-names: Wade F.
+  journal: "Langmuir"
+  year: 2026
+  doi: 10.1021/acs.langmuir.6c03110
